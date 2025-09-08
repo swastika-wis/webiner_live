@@ -45,7 +45,7 @@
                             <td>{{$loop->iteration}}</td>
                             <td></td>
                             <td>{{$data['topic']}}</td>
-                            <td><a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Join</a></td>
+                            <td><a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Start</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -83,7 +83,7 @@
     }
 
     function startMeeting(meetingNumber,passWord) {
-        const role = 0; // 0 = attendee, 1 = host
+        const role = 1; // 0 = attendee, 1 = host
 
         getSignature(meetingNumber, role).then(({ signature, sdkKey }) => {
 
@@ -94,8 +94,8 @@
                         signature: signature,
                         sdkKey: @json(env('ZOOM_SDK_KEY')),
                         meetingNumber: meetingNumber,
-                        userName: "abcd@gmail.com",
-                        userEmail: "abcd@gmail.com",
+                        userName: "1abcd@gmail.com",
+                        userEmail: "1abcd@gmail.com",
                         passWord: passWord,
                         success: (res) => console.log("Join success", res),
                         error: (err) => console.error("Join error", err),

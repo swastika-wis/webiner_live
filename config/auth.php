@@ -44,6 +44,11 @@ return [
             'driver' => 'session',
             'provider' => 'webusers',
         ],
+
+        'vendoruser' => [   
+            'driver' => 'session',
+            'provider' => 'vendorusers',
+        ],
     ],
 
     /*
@@ -77,6 +82,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\WebUser::class,
         ],
+        'vendorusers'=>[
+            'driver' => 'eloquent',
+            'model' => App\Models\Vendor::class,
+        ]
 
     ],
 

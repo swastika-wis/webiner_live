@@ -13,7 +13,7 @@ class WebUser extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'web_users';   // your table name
+    protected $table = 'participents';   // your table name
 
     protected $primaryKey = 'id';     // primary key
 

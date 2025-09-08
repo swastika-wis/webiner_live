@@ -15,8 +15,8 @@
 
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">My Meetings</h6>
-        <a href="{{route('create-meeting')}}">Create Meeting</a>
+        <h4 class="m-0 font-weight-bold text-primary">My Meetings</h4><hr>
+        <a href="{{route('create-meeting')}}" class="btn btn-info">Create Meeting</a>
     </div>
 
     <div class="card-body">
@@ -33,7 +33,7 @@
                     <tr>
                         <td>Duration</td>
                         <td>Meeting Topic</td>
-                        <td>Action</td>
+                        <td colspan="2">Action</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,13 +76,19 @@
                                     Meeting ID: {{$meeting['id']}}
                                 </div>
                             </td>
+                            {{-- <td>
+                                <a href="javascript:void(0)" onclick="startMeeting('{{$meeting['id']}}','{{$join_url[1]}}')" class="btn btn-primary">Start</a>                                
+                            </td> --}}
                             <td>
-                                <a href="javascript:void(0)" onclick="startMeeting('{{$meeting['id']}}','{{$join_url[1]}}')" class="btn btn-primary">Start</a>
-                                
+                                <a href="javascript:void(0);" class="btn btn-info"  onclick="copyLinkLogin('{{route('vendor-login',\Crypt::encrypt($vendor_meetings[$meeting['id']]))}}')">Share Vendor Link</a>
+
+
+                                <div class="copied-msg" id="copiedMessageLogin">Link copied to clipboard!</div>
+
                             </td>
 
                             <td>
-                                <a href="javascript:void(0);" class="btn btn-info"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share Registration Link</a>
+                                <a href="javascript:void(0);" class="btn btn-info"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share User Registration Link</a>
 
 
                                 <div class="copied-msg" id="copiedMessage">Link copied to clipboard!</div>
@@ -139,7 +145,7 @@
         getSignature(meetingNumber, role).then(({ signature, sdkKey }) => {
 
             ZoomMtg.init({
-                leaveUrl: "http://localhost/webiner-live/dashboard",
+                leaveUrl: "http://localhost:1234/meetings/scheduled",
                 success: () => {
                     ZoomMtg.join({
                         signature: signature,
@@ -172,6 +178,21 @@
         }, 2000);
       });
     }
+
+    function copyLinkLogin(linkInput) {
+     
+     // Copy the text
+     navigator.clipboard.writeText(linkInput).then(function() {
+     // Show confirmation message
+     const message = document.getElementById("copiedMessageLogin");
+     message.style.display = "block";
+
+     // Hide it again after 2 seconds
+     setTimeout(() => {
+       message.style.display = "none";
+     }, 2000);
+   });
+ }
 
     
 </script>

@@ -70,9 +70,22 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="vendorName">Vendor Name</label>
-                            <input type="text" name="name" class="form-control" id="vendorName"
+                            <input type="text" name="name" class="form-control"
                                 placeholder="Enter vendor name" required>
                         </div>
+
+                        <div class="form-group">
+                            <label for="vendorName">User Name</label>
+                            <input type="email" name="user_name" class="form-control"
+                                placeholder="Enter vendor name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vendorName">Password</label>
+                            <input type="password" name="password" class="form-control"
+                                placeholder="Enter vendor name" required>
+                        </div>
+
                         <div class="row">
                             <div class="col-sm-2">
                                 <div class="form-group">

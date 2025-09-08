@@ -1,9 +1,19 @@
 <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
-        <div class="sidebar-brand-text mx-3">{{ Auth::user()?->name ?? 'Guest' }}</div>
+
+        <div class="sidebar-brand-text mx-3">
+            @if(Auth::user())
+                {{ Auth::user()?->name ?? 'Guest' }}
+            @else 
+                {{ Auth::guard('webuser')->user()?->full_name ?? 'Guest' }}
+            @endif
+
+        </div>
     </a>
 
     <hr class="sidebar-divider my-0">
+
+    @if(Auth::user())
 
     <li class="nav-item @if(Request::is('dashboard')) active @endif">
         <a class="nav-link" href="{{ route('dashboard') }}">
@@ -20,6 +30,13 @@
             <span>Vendor</span>
         </a>
     </li>
+    
+    <li class="nav-item @if(Request::is('create-meeting')) active @endif">
+        <a class="nav-link" href="{{route('create-meeting')}}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Create Meetings</span>
+        </a>
+    </li>
 
      <li class="nav-item @if(Request::is('meeting')) active @endif">
         <a class="nav-link" href="{{route('meeting','scheduled')}}">
@@ -29,12 +46,15 @@
     </li>
 
 
-    <li class="nav-item @if(Request::is('create-meeting')) active @endif">
-        <a class="nav-link" href="{{route('create-meeting')}}">
+    @elseif(Auth::guard('webuser'))
+    <li class="nav-item @if(Request::is('meeting')) active @endif">
+        <a class="nav-link" href="{{route('meeting','scheduled')}}">
             <i class="fas fa-fw fa-table"></i>
-            <span>Create Meetings</span>
+            <span>List Of Meetings</span>
         </a>
     </li>
+
+    @endif
 
     {{-- <li class="nav-item">
         <a class="nav-link" href="#">

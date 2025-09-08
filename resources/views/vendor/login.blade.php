@@ -74,12 +74,15 @@
     <div class="row g-0">
       <!-- Left panel -->
       <div class="col-md-6 left-panel d-flex flex-column justify-content-center align-items-center" 
-        
-            style="background: url({{ asset('/public/storage/' . $record->vendorRecord->logo) }}) no-repeat center center; background-size: contain;"
-        >
+        @if($vendor)
+            style="background: url({{ asset('/public/storage/' . $vendor->logo) }}) no-repeat center center; background-size: contain;"
+        @endif>
 
-            
-          
+        @if(!$vendor)         
+          <img src="{{asset('/assets/img/wis-logo.png')}}" alt="Webinar Illustration">
+          <h3>Join Engaging Webinars</h3>
+          <p>Learn, connect, and grow through interactive online sessions.</p>
+        @endif
       </div>
       
       <!-- Right panel -->
@@ -93,41 +96,26 @@
           <div class="alert alert-success">{{session('success')}}</div>
         @endif
 
+        <h2 class="text-center mb-3">Welcome Back</h2>
+        <p class="text-center text-muted">Login to your Webinar account</p>
         
        
-        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Book your seat for <strong>{{$record->topic}}</strong></h2>
-        <form action="{{route('store-participent')}}" method="POST" class="space-y-4">
-            @csrf
-            <input type="hidden" name="meeting_id" value="{{$meeting_id}}">
-            <div class="form-group">
-                <label for="topic" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" name="name" required
-                       class="form-control">
-            </div>
-
-            
-                <div class="form-group">
-                    <label for="start_time" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="text" name="email" required
-                           class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                    <input type="text" name="phone" class="form-control">
-                </div>
-
-
-                <div class="form-group">
-                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" class="form-control">
-                </div>
-        
-
-            <button type="submit" class="btn btn-success mt-3">
-               Register
-            </button>
+        <form action="{{route('vendor-validate')}}" method="post">
+         @csrf
+         <input type="hidden" name="meeting_vendor"  value="{{$vendor->id??0}}">       
+          <div class="mb-3">
+            <label for="text" class="form-label">Email address</label>
+            <input type="text" name="email" class="form-control" placeholder="Enter email">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+          </div>
+          {{-- <div class="d-flex justify-content-between mb-3">
+            <a href="#" class="small">Forgot password?</a>
+          </div> --}}
+          <button type="submit" class="btn btn-dark w-100">Sign In</button>
         </form>
-
 
       </div>
     </div>

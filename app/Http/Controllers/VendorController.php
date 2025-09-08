@@ -9,17 +9,18 @@ class VendorController extends Controller
 {
     public function vendor()
     {
-      
         $vendors = Vendor::paginate(5);
-        return view('admin.vendor',compact('vendors'));
+        return view('admin.vendor', compact('vendors'));
     }
     public function vendorStore(Request $request)
     {
-       $validated = $request->validate([
+        $validated = $request->validate([
             'name'             => 'required|string|max:255',
             'theme_background' => 'nullable|string|max:7', // hex value
             'theme_foreground' => 'nullable|string|max:7',
             'logo'             => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'user_name'        => 'required',
+            'password'         => 'required'
         ]);
 
         // Handle logo upload
@@ -30,6 +31,8 @@ class VendorController extends Controller
 
         Vendor::create([
             'name'             => $validated['name'],
+            'user_name'        => $validated['user_name'],
+            'password'         => bcrypt($validated['password']),
             'theme_background' => $validated['theme_background'] ?? null,
             'theme_foreground' => $validated['theme_foreground'] ?? null,
             'logo'             => $logoPath,

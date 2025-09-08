@@ -108,6 +108,17 @@
           </div> --}}
           <button type="submit" class="btn btn-dark w-100">Sign In</button>
         </form>
+
+        <div class="mt-3 d-flex gap-2">
+        <div class="mt-3">
+          <a href="{{route('vendor-login',\Crypt::encrypt(0))}}" class="btn btn-info">Vendor Login </a>
+        </div>
+
+
+        <div class="mt-3">
+          <a href="{{route('user-login')}}" class="btn btn-info">Participent Login Here</a>
+        </div>
+        </div>
        
       </div>
     </div>

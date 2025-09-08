@@ -47,6 +47,13 @@ class Kernel extends HttpKernel
 
         'webuserGroup' => [
             \App\Http\Middleware\CheckWebUser::class,
+        ],
+
+        'participateGroup'=>[
+            \App\Http\Middleware\ChekParticipent::class,
+        ],
+        'vendorGroup'=>[
+            \App\Http\Middleware\ChekVendor::class,
         ]
     ];
 

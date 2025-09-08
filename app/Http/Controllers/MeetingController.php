@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MeetingModel;
 use App\Models\Participent;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use App\Services\ZoomService;
 use Illuminate\Support\Facades\Crypt;
@@ -20,14 +21,17 @@ class MeetingController extends Controller
     public function index($type)
     {
         $db_meetings = MeetingModel::get()->pluck('meeting_number')->toArray();
+        $vendor_meetings = MeetingModel::get()->pluck('vendor_id','meeting_number')->toArray();
+        
         
         $meetings = $this->zoomService->listOfAllMeeting($type); 
-        return view('admin.zoom_meetings', ['meetings' => $meetings],compact('db_meetings'));
+        return view('admin.zoom_meetings', ['meetings' => $meetings],compact('db_meetings','vendor_meetings'));
     }
 
     public function create(Request $request)
     {
-        return view('admin.create_meeting');
+        $vendors = Vendor::get();
+        return view('admin.create_meeting',compact('vendors'));
     }
     public function store(Request $request)
     {
@@ -50,6 +54,7 @@ class MeetingController extends Controller
         $meeting = $this->zoomService->createMeeting($meetingData);        
         $type="upcoming";
         $meeting_reocrd=new MeetingModel();
+        $meeting_reocrd->vendor_id=$request->meeting_vendor;
         $meeting_reocrd->topic=$request->topic;
         $meeting_reocrd->meeting_number=$meeting['id'];
         $meeting_reocrd->meeting_details=response()->json($meeting);
@@ -60,8 +65,7 @@ class MeetingController extends Controller
 
     public function register_user(Request $request,$meeting_id)
     {
-        $record=MeetingModel::select('topic')->where('meeting_number',Crypt::decrypt($meeting_id))->first();
-
+        $record=MeetingModel::where('meeting_number',Crypt::decrypt($meeting_id))->first();
         return view("admin.register_user",compact('meeting_id','record'));
     }
 
@@ -72,7 +76,9 @@ class MeetingController extends Controller
         $record->email=$request->email;
         $record->phone=$request->phone;
         $record->meeting_id=Crypt::decrypt($request->meeting_id);
+        $record->password=bcrypt($request->password);
         $record->save();
+        return redirect()->route('user-login');
 
     }
 }

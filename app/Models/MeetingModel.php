@@ -12,4 +12,9 @@ class MeetingModel extends Model
 
     protected $table="meetings";
     protected $guarded=[];
+
+    public function vendorRecord()
+    {
+        return $this->hasOne(Vendor::class,"id","vendor_id");
+    }
 }

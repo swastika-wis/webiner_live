@@ -8,6 +8,17 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create a New Meeting</h2>
         <form action="{{route('store-meeting')}}" method="POST" class="space-y-4">
             @csrf
+
+            <div class="form-group w-25">
+                <label for="topic" class="block text-sm font-medium text-gray-700 mb-1">Select Vendor</label>
+                <select name="meeting_vendor" class="form-control" required>
+                    <option value="">Select Vendor</option>
+                    @foreach($vendors as $vendor)
+                        <option value="{{$vendor->id}}">{{$vendor->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="form-group w-25">
                 <label for="topic" class="block text-sm font-medium text-gray-700 mb-1">Meeting Topic</label>
                 <input type="text" name="topic" id="topic" required

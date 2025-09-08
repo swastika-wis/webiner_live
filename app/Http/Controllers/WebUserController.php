@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MeetingModel;
 use App\Models\WebUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,5 +53,35 @@ class WebUserController extends Controller
 
     }
 
-    
+    public function user_login()
+    {
+        return view('users.login');
+    }
+
+    public function user_validate(Request $request)
+    {
+        
+        $user = WebUser::where('phone', $request->phone)->first();
+        
+        
+        if($user)
+        {
+            Auth::guard('webuser')->login($user); 
+            $request->session()->regenerate();
+            return redirect()->route('user-dashboard');
+        }
+        
+        $request->session()->flash('fail','Unable to login!');
+        return redirect()->route('index');
+    }
+
+    public function dashboard()
+    {   
+        $phone = Auth::guard('webuser')->user()->phone;
+        $meeting_ids = WebUser::where('phone',$phone)->get()->pluck('meeting_id')->toArray();
+        $meetings = MeetingModel::whereIn('meeting_number',$meeting_ids)->get();
+        
+
+        return view('users.dashboard',compact('meetings'));
+    }
 }
