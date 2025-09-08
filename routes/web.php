@@ -25,4 +25,9 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::get('/create-meeting', [MeetingController::class, 'create'])->name('create-meeting');
     Route::post('/store-meeting', [MeetingController::class, 'store'])->name('store-meeting');
 
+
+    // Register user for a meeting
+    Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
+    Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
+
 });

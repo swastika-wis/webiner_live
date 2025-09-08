@@ -3,6 +3,16 @@
 @section('title', 'My Vendors')
 
 @section('content')
+
+<style>
+     .copied-msg {
+      color: green;
+      margin-top: 10px;
+      display: none;
+    }
+</style>
+
+
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">My Meetings</h6>
@@ -28,7 +38,7 @@
                 </thead>
                 <tbody>
                     @forelse($meetings as $meeting)
-
+                    @if(in_array($meeting['id'],$db_meetings))
                     @php
                         // Map timezones to friendly labels
                         $timezoneLabels = [
@@ -72,9 +82,14 @@
                             </td>
 
                             <td>
-                                <a href="">Share Registration Link</a>
+                                <a href="javascript:void(0);" class="btn btn-info"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share Registration Link</a>
+
+
+                                <div class="copied-msg" id="copiedMessage">Link copied to clipboard!</div>
+
                             </td>
                         </tr>
+                    @endif
                     @empty
                         No Meetings Listed
                     @endforelse 
@@ -121,12 +136,10 @@
     function startMeeting(meetingNumber,passWord) {
         const role = 1; // 0 = attendee, 1 = host
 
-
-
         getSignature(meetingNumber, role).then(({ signature, sdkKey }) => {
 
             ZoomMtg.init({
-                leaveUrl: "http://www.zoom.us",
+                leaveUrl: "http://localhost/webiner-live/dashboard",
                 success: () => {
                     ZoomMtg.join({
                         signature: signature,
@@ -143,6 +156,24 @@
             });
         });
     }
+
+
+      function copyLink(linkInput) {
+     
+        // Copy the text
+        navigator.clipboard.writeText(linkInput).then(function() {
+        // Show confirmation message
+        const message = document.getElementById("copiedMessage");
+        message.style.display = "block";
+
+        // Hide it again after 2 seconds
+        setTimeout(() => {
+          message.style.display = "none";
+        }, 2000);
+      });
+    }
+
+    
 </script>
 
 @endsection
