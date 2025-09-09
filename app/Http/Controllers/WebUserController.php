@@ -60,14 +60,12 @@ class WebUserController extends Controller
 
     public function user_validate(Request $request)
     {
-        
         $user = WebUser::where('phone', $request->phone)->first();
-        
-        
         if($user)
         {
             Auth::guard('webuser')->login($user); 
-            $request->session()->regenerate();
+            
+            $request->session()->put('webuser',$user);
             return redirect()->route('user-dashboard');
         }
         

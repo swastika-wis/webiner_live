@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'User')
+@section('title', 'Host')
 
 
 @section('styles')
@@ -38,14 +38,14 @@
                         $jsonPart = substr($raw, strpos($raw, '{'));
                         $data = json_decode($jsonPart, true);
                         $password=explode('pwd=',$data['join_url']);
-                       //dd($data);
+                       //dd($data['duration']);
                         
                     @endphp 
                         <tr>
                             <td>{{$loop->iteration}}</td>
-                            <td></td>
+                            <td>{{$data['duration']}} Minutes</td>
                             <td>{{$data['topic']}}</td>
-                            <td><a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Start</a></td>
+                            <td><a href="javascript:void(0)" class="btn btn-info" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Start</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -65,6 +65,7 @@
 <script src="https://source.zoom.us/4.0.5/zoom-meeting-4.0.5.min.js"></script>
 
 <script>
+    
     // const ZoomMtg = window.ZoomMtg;
     // ZoomMtg.preLoadWasm();
     // ZoomMtg.prepareWebSDK();
@@ -94,8 +95,8 @@
                         signature: signature,
                         sdkKey: @json(env('ZOOM_SDK_KEY')),
                         meetingNumber: meetingNumber,
-                        userName: "1abcd@gmail.com",
-                        userEmail: "1abcd@gmail.com",
+                        userName: @json(Auth::guard('vendoruser')->user()?->user_name),
+                        userEmail: @json(Auth::guard('vendoruser')->user()?->user_name),
                         passWord: passWord,
                         success: (res) => console.log("Join success", res),
                         error: (err) => console.error("Join error", err),

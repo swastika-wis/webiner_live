@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'User')
+@section('title', 'Paticipent')
 
 
 @section('styles')
@@ -43,9 +43,9 @@
                     @endphp 
                         <tr>
                             <td>{{$loop->iteration}}</td>
-                            <td></td>
+                            <td>{{$data['duration']}} Minutes</td>
                             <td>{{$data['topic']}}</td>
-                            <td><a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Join</a></td>
+                            <td><a href="javascript:void(0)" class="btn btn-info" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Join</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -85,6 +85,7 @@
     function startMeeting(meetingNumber,passWord) {
         const role = 0; // 0 = attendee, 1 = host
 
+      
         getSignature(meetingNumber, role).then(({ signature, sdkKey }) => {
 
             ZoomMtg.init({
@@ -94,8 +95,8 @@
                         signature: signature,
                         sdkKey: @json(env('ZOOM_SDK_KEY')),
                         meetingNumber: meetingNumber,
-                        userName: "abcd@gmail.com",
-                        userEmail: "abcd@gmail.com",
+                        userName: @json(session('webuser')->email),
+                        userEmail: @json(session('webuser')->email),
                         passWord: passWord,
                         success: (res) => console.log("Join success", res),
                         error: (err) => console.error("Join error", err),
@@ -106,7 +107,6 @@
         });
     }
 
-        
 </script>
 
 

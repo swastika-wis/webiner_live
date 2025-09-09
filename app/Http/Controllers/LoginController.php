@@ -34,4 +34,20 @@ class LoginController extends Controller
         $request->session()->flash('success','Logout successful!');
         return redirect()->route('index');
     }
+
+    public function vendor_logout(Request $request)
+    {
+        Auth::guard('vendoruser')->logout();
+        $request->session()->pull('vendoruser');
+        $request->session()->flash('success','Vendor Logout successful!');
+        return redirect()->route('index');
+    }
+
+    public function participent_logout(Request $request)
+    {
+        Auth::guard('webuser')->logout();
+        $request->session()->pull('webuser');    
+        $request->session()->flash('success','Participent Logout successful!');    
+        return redirect()->route('index');
+    }
 }

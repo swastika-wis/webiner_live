@@ -16,7 +16,7 @@ class ChekParticipent
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::guard('webuser')->check()) {
+        if (!session('webuser')) {
         
             $request->session()->flash('fail','Please login first!');
             return redirect()->route('user-login');

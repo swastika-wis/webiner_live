@@ -1,11 +1,12 @@
 <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
-
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#"> 
         <div class="sidebar-brand-text mx-3">
             @if(Auth::user())
                 {{ Auth::user()?->name ?? 'Guest' }}
-            @else 
-                {{ Auth::guard('webuser')->user()?->full_name ?? 'Guest' }}
+            @elseif(session('vendoruser'))
+                {{ session('vendoruser')->name ?? 'Guest' }}
+            @elseif(session('webuser'))
+                {{ session('webuser')->full_name ?? 'Guest' }}
             @endif
 
         </div>

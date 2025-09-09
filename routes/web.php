@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () { return view('index');})->name('index');
 Route::post('/login',[LoginController::class,"login"])->name('login');
 Route::get('/logout',[LoginController::class,"logout"])->name('logout');
+Route::get('/host-logout',[LoginController::class,"vendor_logout"])->name('host-logout');
+Route::get('/participent-logout',[LoginController::class,"participent_logout"])->name('participent-logout');
 
 
 // Participent
@@ -24,6 +26,9 @@ Route::post('/user-validate',[WebUserController::class,"user_validate"])->name('
 Route::get('/vendor-login/{vendor_id}',[WebvendorController::class,"vendor_login"])->name('vendor-login');
 Route::post('/vendor-validate',[WebvendorController::class,"vendor_validate"])->name('vendor-validate');
 
+// Register participent for a meeting
+    Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
+    Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
 
 
 Route::middleware(['webuserGroup'])->group(function () {
@@ -39,11 +44,6 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::get('/meetings/{type}',[MeetingController::class,"index"])->name('meeting');
     Route::get('/create-meeting', [MeetingController::class, 'create'])->name('create-meeting');
     Route::post('/store-meeting', [MeetingController::class, 'store'])->name('store-meeting');
-
-
-    // Register user for a meeting
-    Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
-    Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
 
 });
 

@@ -17,7 +17,7 @@ class ChekVendor
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user logged in with 'webuser' guard
-        if (!Auth::guard('vendoruser')->check()) {
+        if (!session('vendoruser')) {
         
             $request->session()->flash('fail','Please login first!');
             return redirect()->route('index');

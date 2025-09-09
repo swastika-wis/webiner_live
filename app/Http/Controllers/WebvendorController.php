@@ -31,7 +31,8 @@ class WebvendorController extends Controller
         $auth = Auth::guard('vendoruser')->attempt(['user_name'=>$request->email,'password'=>$request->password]);
         if($auth)
         {
-            $request->session()->regenerate();
+            $user=Auth::guard('vendoruser')->user();
+            $request->session()->put('vendoruser',$user);
             return redirect()->route('vendor-dashboard');            
         }
 
