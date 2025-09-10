@@ -62,6 +62,10 @@
 </div>
 
 
+<iframe class="pwa-webclient__iframe" id="webclient" src="https://app.zoom.us/wc/82044906792/join?from=pwa" role="presentation" height="600px" width="100%"></iframe>
+
+
+{{-- <iframe class="pwa-webclient__iframe" id="webclient" src="https://app.zoom.us/wc/82044906792/join?from=pwa" role="" height="600px" width="100%"></iframe> --}}
 
 
 <div class="modal fade" id="participant_modal" tabindex="-1" aria-labelledby="tabModalLabel" aria-hidden="true">
@@ -149,6 +153,7 @@
 
             ZoomMtg.init({
                 leaveUrl: "https://webideasolution.in/webiner/vendor-dashboard",
+                patchJsMedia: true,
                 success: () => {
                     ZoomMtg.join({
                         signature: signature,
@@ -193,8 +198,7 @@
     </script>
 
     <script>
-        
-         function showParticipantList(meetingNumber)
+        function showParticipantList(meetingNumber)
  {
     const csrfToken = "{{ csrf_token() }}";
     $.ajax({
