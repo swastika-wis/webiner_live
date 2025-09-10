@@ -35,7 +35,7 @@ class WebvendorController extends Controller
             $request->session()->put('vendoruser',$user);
             return redirect()->route('vendor-dashboard');            
         }
-
+        $request->session()->flash('fail','Unable to login!');
         return redirect()->back();
     }
 

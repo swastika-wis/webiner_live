@@ -20,19 +20,20 @@ Route::get('/participent-logout',[LoginController::class,"participent_logout"])-
 // Participent
 Route::get('/user-login',[WebUserController::class,"user_login"])->name('user-login');
 Route::post('/user-validate',[WebUserController::class,"user_validate"])->name('user-validate');
+Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
+Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
 
 
-// Participent
+// Vendor
 Route::get('/vendor-login/{vendor_id}',[WebvendorController::class,"vendor_login"])->name('vendor-login');
 Route::post('/vendor-validate',[WebvendorController::class,"vendor_validate"])->name('vendor-validate');
 
-// Register participent for a meeting
-    Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
-    Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
 
+/////// show participant list
+Route::post('/get-participant',[MeetingController::class,"participant_list"])->name('partcipant-list');
 
 Route::middleware(['webuserGroup'])->group(function () {
-    // auth checking
+    
     Route::get('/dashboard',[LoginController::class,"dashboard"])->name('dashboard');
 
     /////// Vendor
@@ -45,6 +46,7 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::get('/create-meeting', [MeetingController::class, 'create'])->name('create-meeting');
     Route::post('/store-meeting', [MeetingController::class, 'store'])->name('store-meeting');
 
+    
 });
 
 
@@ -53,6 +55,8 @@ Route::middleware(['participateGroup'])->group(function () {
 });
 
 
+
 Route::middleware(['vendorGroup'])->group(function () {
     Route::get('/vendor-dashboard',[WebvendorController::class,"dashboard"])->name('vendor-dashboard');
+    
 });

@@ -16,37 +16,35 @@
 @section('content')
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Meetings</h6>
+        <h5 class="m-0 font-weight-bold text-theme">Meetings</h5>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+            <table class="table" id="dataTable2" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Duration</th>
                         <th>Meeting Topic</th>
                         <th>Action</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($meetings as $meeting)
                     @php 
-                        
                         $raw = $meeting->meeting_details;
                         $jsonPart = substr($raw, strpos($raw, '{'));
                         $data = json_decode($jsonPart, true);
-                        $password=explode('pwd=',$data['join_url']);
-                       //dd($data);
-                        
+                        $password = explode('pwd=', $data['join_url']);
                     @endphp 
-                        <tr>
-                            <td>{{$loop->iteration}}</td>
-                            <td>{{$data['duration']}} Minutes</td>
-                            <td>{{$data['topic']}}</td>
-                            <td><a href="javascript:void(0)" class="btn btn-info" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Join</a></td>
-                        </tr>
+                    <tr>
+                        <td data-label="ID">{{$loop->iteration}}</td>
+                        <td data-label="Duration">30 min</td>
+                        <td data-label="Meeting Topic">{{$data['topic']}}</td>
+                        <td data-label="Action">
+                            <a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')" class="btn btn-sm btn-primary text-white">Join</a>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -85,11 +83,10 @@
     function startMeeting(meetingNumber,passWord) {
         const role = 0; // 0 = attendee, 1 = host
 
-      
         getSignature(meetingNumber, role).then(({ signature, sdkKey }) => {
 
             ZoomMtg.init({
-                leaveUrl: "http://localhost:1234/meetings/scheduled",
+                leaveUrl: "https://webideasolution.in/webiner/user-dashboard",
                 success: () => {
                     ZoomMtg.join({
                         signature: signature,
@@ -107,6 +104,7 @@
         });
     }
 
+        
 </script>
 
 

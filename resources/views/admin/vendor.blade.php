@@ -5,15 +5,15 @@
 @section('content')
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">My Vendors</h6>
+            <h5 class="m-0 font-weight-bold text-primary"> My Vendors</h5>
             <!-- Add Vendor Button -->
-            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addVendorModal">
-                <i class="fas fa-plus"></i> Add Vendor
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVendorModal">
+                <i class="fas fa-plus mr-2"></i> Add Vendor
             </button>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                <table class="table" id="dataTable2" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -28,7 +28,7 @@
                         @foreach($vendors as $vendor)
                              <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td><img src="{{ asset('/public/storage/' . $vendor->logo) }}" alt="Vendor Logo" width="100"></td>
+                                <td><img src="{{ asset('/public/storage/' . $vendor->logo) }}" alt="Vendor Logo" height="100"></td>
                                 <td>{{$vendor->name}}</td>
                                <td>
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -43,7 +43,7 @@
                         {{ $vendor->theme_foreground }}
                     </div>
                 </td>
-                                <td><a href="">Delete</td>           
+                                <td><a href="" class="text-danger">Delete</td>
                             </tr>
                         @endforeach
                     </tbody>

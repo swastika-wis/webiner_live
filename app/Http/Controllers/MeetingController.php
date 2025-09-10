@@ -71,14 +71,59 @@ class MeetingController extends Controller
 
     public function store_participent(Request $request)
     {
-        $record = new Participent();
-        $record->full_name=$request->name;
-        $record->email=$request->email;
-        $record->phone=$request->phone;
-        $record->meeting_id=Crypt::decrypt($request->meeting_id);
-        $record->password=bcrypt($request->password);
-        $record->save();
-        return redirect()->route('user-login');
+        // check user already registered or not?
+        $record = Participent::where('phone',$request->phone)->where('meeting_id',Crypt::decrypt($request->meeting_id))->first();
+        if($record)
+        {
+            $request->session()->flash('You are already registerd! Please login with your phone number.');
+            return redirect()->route('user-login');
+        }
+        else {
 
+            $record = new Participent();
+            $record->full_name=$request->name;
+            $record->email=$request->email;
+            $record->phone=$request->phone;
+            $record->meeting_id=Crypt::decrypt($request->meeting_id);
+            $record->password=bcrypt($request->password);
+            $record->save();
+            return redirect()->route('user-login');
+        }
+
+    }
+
+    public function participant_list(Request $request)
+    {
+        $participant_list = Participent::where('meeting_id',$request->meeting_number)->get();
+        $participants=' <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+
+                                        <th>Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+        $i=1;
+        foreach($participant_list as $participant)
+        {
+            $participants.="<tr>
+                <td>".$i++."</td>
+                <td>".$participant->full_name."</td>
+                <td>".$participant->email."</td>
+                <td>".$participant->phone."</td>
+            </tr>";
+        }
+
+        $participants.='</tbody>';
+
+        return response()->json([
+            'success' => true,
+            'data'=>[
+                'participants'=>$participants
+            ]
+            
+        ]);
     }
 }
