@@ -115,15 +115,16 @@
       <div class="col-12 mb-3 mb-lg-4">
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 align-items-center">
           <div>
-            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo) }}" alt="" width="100px" height="100px">
+            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo2) }}" alt="" width="100px" height="100px">
           </div>
           <div>
-            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo) }}" alt="" width="100px" height="100px">
+            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo3) }}" alt="" width="200px" height="100px">
           </div>
         </div>
       </div>
       <!-- Left panel -->
-      <div class="col-md-6 left-panel d-flex flex-column justify-content-center align-items-center" style="background: url({{ asset('/public/storage/' . $record->vendorRecord->logo) }}) no-repeat center center; background-size: contain;">
+      <div class="col-md-6 left-panel d-flex flex-column justify-content-center align-items-center" 
+      style="background: url({{ asset('/public/storage/' . $record->vendorRecord->logo) }}) no-repeat center center; background-size: contain;">
         
       </div>
       

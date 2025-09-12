@@ -17,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 
     @stack('styles')
+    @yield('extra_css')
 </head>
 
 <body id="page-top">
@@ -32,6 +33,12 @@
 
                 {{-- Main Content --}}
                 <div class="container-fluid">
+
+                    {{-- Toasts --}}
+                    <div id="myToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body alert-success" id="toast_message">
+                        </div>
+                    </div>
                     @yield('content')
                 </div>
             </div>
@@ -50,8 +57,9 @@
     @include('partials.logout-modal')
 
     <!-- Scripts -->
-    <script src="{{ asset('/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    
+    {{-- <script src="{{ asset('/vendor/jquery/jquery.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script src="{{ asset('/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('/assets/js/sb-admin-2.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/jquery.dataTables.min.js') }}"></script>
@@ -80,6 +88,11 @@
 
     });
     </script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" ></script>
+
     @stack('scripts')
     @yield('extra_js')
 </body>

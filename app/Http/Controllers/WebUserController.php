@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\MeetingModel;
+use App\Models\Participent;
+use App\Models\PollModel;
+use App\Models\PollOptionModel;
+use App\Models\UserPollModel;
 use App\Models\WebUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,12 +64,14 @@ class WebUserController extends Controller
 
     public function user_validate(Request $request)
     {
-        $user = WebUser::where('phone', $request->phone)->first();
-        if($user)
-        {
-            Auth::guard('webuser')->login($user); 
-            
-            $request->session()->put('webuser',$user);
+
+        $user = Auth::guard('webuser')->attempt(['phone'=>$request->phone,'password'=>$request->password]);
+        
+        $record = Auth::guard('webuser')->user();
+        
+        if($user && $record->status==1)
+        {            
+            $request->session()->put('webuser',Auth::guard('webuser')->user());
             return redirect()->route('user-dashboard');
         }
         
@@ -82,4 +88,48 @@ class WebUserController extends Controller
 
         return view('users.dashboard',compact('meetings'));
     }
+
+    public function join_meeting($meeting_id)
+    {
+        $meeting = MeetingModel::where('meeting_number',$meeting_id)->first();
+        $meeting_polls = PollModel::where('meeting_number',$meeting_id)->get();
+        return view('users.join_meeting',compact('meeting','meeting_polls'));
+    }
+
+    public function update_participant_status($status,$id)
+    {
+        $new_status = (-$status)+(1);
+        Participent::where(['id'=>$id])->update(["status"=>$new_status]);
+        return redirect()->back();
+    }
+
+    public function user_poll_submission(Request $request)
+    {
+        foreach ($request->all() as $key => $value) {
+            if (str_starts_with($key, 'poll_option_')) {
+                $pollId = str_replace('poll_option_', '', $key);
+                $record = new UserPollModel();
+                $record->paticipant_id=$request->participant_id;
+                $record->poll_id=$request->poll_."".$pollId;
+                $record->poll_option_id=$value;
+                $record->save();
+
+                PollOptionModel::where('id',$value)->increment('votes_count');
+     
+            }
+        }
+
+        return response([ 'message'=>'success'],200);
+    }
+
+
+
+
+    public function poll_list()
+    {
+        $meeting_polls = PollModel::with('options')->get();
+
+        return view('users.poll-list', compact('meeting_polls'))->render();
+    }
+
 }

@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'My Vendors')
+@section('title', 'List of meetings')
 
-@section('content')
+@section('extra_css')
+<link href="https://cdn.datatables.net/v/dt/dt-2.3.4/datatables.min.css" rel="stylesheet" >
 
 <style>
      .copied-msg {
@@ -12,6 +13,11 @@
     }
 </style>
 
+@endsection
+
+
+
+@section('content')
 
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -83,20 +89,22 @@
                             <td>
                                 <a href="javascript:void(0)" onclick="showParticipantList('{{$meeting['id']}}')" class="btn btn-primary text-white btn-sm">Show Participant List</a>                                
                             </td>
-                            <td>
-                                <a href="javascript:void(0);" class="btn btn-warning text-white btn-sm"  onclick="copyLinkLogin('{{route('vendor-login',\Crypt::encrypt($vendor_meetings[$meeting['id']]))}}')">Share Vendor Link</a>
-
-
-                                <div class="copied-msg" id="copiedMessageLogin">Link copied to clipboard!</div>
-
-                            </td>
+                        
 
                             <td>
-                                <a href="javascript:void(0);" class="btn btn-info text-white btn-sm"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share User Registration Link</a>
+                                <div class="dropdown">
+                                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Dropdown button  </button>
+                                    
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        
+                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share User Registration Link</a>
 
 
-                                <div class="copied-msg" id="copiedMessage">Link copied to clipboard!</div>
 
+                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLinkLogin('{{route('vendor-login',\Crypt::encrypt($vendor_meetings[$meeting['id']]))}}')">Share Vendor Link</a>
+
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @endif
@@ -114,21 +122,18 @@
 
 
 <div class="modal fade" id="participant_modal" tabindex="-1" aria-labelledby="tabModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- modal-lg for wider modal -->
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"> <!-- modal-lg for wider modal -->
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal with Tabs</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+          
             <div class="modal-body">
 
                 <!-- Nav Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                      <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
+                        <button class="nav-link active" id="participation-table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
+                        <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
                     </li>
                    
                 </ul>
@@ -138,10 +143,9 @@
 
 
                     <!-- Table Tab -->
-                    <div class="tab-pane fade active" id="table-tab-pane" role="tabpanel">
+                    <div class="tab-pane fade show active" id="table-tab-pane" role="tabpanel">
                         <div class="table-scroll">
                             <table class="table table-bordered table-hover" id="participants_list">
-                                
                             </table>
                         </div>
                     </div>
@@ -155,9 +159,14 @@
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary">Save</button>
+            <div class="modal-footer d-flex justify-content-between">
+               
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Send Email to ALL</button>
+
+                <div>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -174,11 +183,14 @@
 <script src="https://source.zoom.us/4.0.5/lib/vendor/redux.min.js"></script>
 <script src="https://source.zoom.us/4.0.5/lib/vendor/redux-thunk.min.js"></script>
 <script src="https://source.zoom.us/4.0.5/zoom-meeting-4.0.5.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-2.3.4/datatables.min.js"></script>
 
 <script>
     // const ZoomMtg = window.ZoomMtg;
     // ZoomMtg.preLoadWasm();
     // ZoomMtg.prepareWebSDK();
+
+    //let table = new DataTable('#participants_list');
 
     async function getSignature(meetingNumber, role) {
         // Call Laravel API route
@@ -217,44 +229,38 @@
         });
     }
 
+    function copyLink(linkInput) {
+        
     
-
-      function copyLink(linkInput) {
-     
         // Copy the text
         navigator.clipboard.writeText(linkInput).then(function() {
         // Show confirmation message
-        const message = document.getElementById("copiedMessage");
-        message.style.display = "block";
-
-        // Hide it again after 2 seconds
-        setTimeout(() => {
-          message.style.display = "none";
-        }, 2000);
+        const message = "Link copied to clipboard!";        
+        $('#myToast').toast('show');
+        $("#toast_message").text(message);
+        
       });
     }
 
-    function copyLinkLogin(linkInput) {
-     
+    function copyLinkLogin(linkInput) {     
      // Copy the text
      navigator.clipboard.writeText(linkInput).then(function() {
      // Show confirmation message
-     const message = document.getElementById("copiedMessageLogin");
-     message.style.display = "block";
+     const message = "Link copied to clipboard!";
 
-     // Hide it again after 2 seconds
-     setTimeout(() => {
-       message.style.display = "none";
-     }, 2000);
-   });
- }
+     $('#myToast').toast('show');
+     $("#toast_message").text(message);
 
- 
- function showParticipantList(meetingNumber)
- {
+      });
+    }
+
+
+
+
+ function showParticipantList(meetingNumber) {
     const csrfToken = "{{ csrf_token() }}";
     $.ajax({
-         headers: {'X-CSRF-TOKEN': csrfToken},
+        headers: { 'X-CSRF-TOKEN': csrfToken },
         url: "{{ route('partcipant-list') }}",
         method: 'POST',
         data: {
@@ -263,13 +269,21 @@
         success: function(response) {
             $("#participant_modal").modal('show');
             $("#participants_list").html(response.data.participants);
-             let tabTrigger = new bootstrap.Tab(document.querySelector('#table-tab'));
-    tabTrigger.show();
+
+            // Ensure the DataTable is initialized after content is inserted
+            setTimeout(function () {
+                if ($.fn.DataTable.isDataTable('#participants_list')) {
+                    $('#participants_list').DataTable().destroy();  // Destroy previous DataTable instance
+                }
+                $('#participants_list').DataTable();  // Initialize DataTable
+            }, 100); // Delay to ensure the content is loaded
         },
     });
- }
+}
 
-    
+
+
+
 </script>
 
 @endsection

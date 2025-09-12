@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendEmail;
 use App\Models\MeetingModel;
 use App\Models\Participent;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use App\Services\ZoomService;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
 
 class MeetingController extends Controller
 {
@@ -87,6 +89,12 @@ class MeetingController extends Controller
             $record->meeting_id=Crypt::decrypt($request->meeting_id);
             $record->password=bcrypt($request->password);
             $record->save();
+
+            $subject="Confirm Your Registration";
+            $view="emails.registraion";
+            $body=["user_name"=>$record->full_name,"user_id"=>$record->id];
+            Mail::to($request->email)->send(new SendEmail($subject,$view,$body));
+
             return redirect()->route('user-login');
         }
 
@@ -100,19 +108,30 @@ class MeetingController extends Controller
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>Email</th>
-
                                         <th>Phone</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>';
         $i=1;
         foreach($participant_list as $participant)
         {
+
+            $message = "Active";
+            if($participant->status==1)
+                $message="Inactive";
+
+            $url = route('update-participant-status', [
+                    'status' => $participant->status,
+                    'id' => $participant->id
+                ]);
+
             $participants.="<tr>
                 <td>".$i++."</td>
                 <td>".$participant->full_name."</td>
                 <td>".$participant->email."</td>
                 <td>".$participant->phone."</td>
+                <td><a class='btn btn-info' href='" . $url . "' onclick=' return confirm(`Are you sure?`)'>Make " . $message . "</a></td>
             </tr>";
         }
 

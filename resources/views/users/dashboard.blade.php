@@ -44,6 +44,10 @@
                         <td data-label="Action">
                             <a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')" class="btn btn-sm btn-primary text-white">Join</a>
                         </td>
+
+                        <td>
+                            <a href="{{route('join-meeting',$data['id'])}}" class="btn btn-sm btn-primary text-white ">Join Here </a>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

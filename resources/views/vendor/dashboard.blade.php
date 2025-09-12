@@ -3,12 +3,42 @@
 @section('title', 'Host')
 
 
-@section('styles')
+
+@section('extra_css')
+<link href="https://cdn.datatables.net/v/dt/dt-2.3.4/datatables.min.css" rel="stylesheet" >
+
 <style>
     /* Hide Zoom Workplace banner - WARNING: Not officially supported */
     .ReactModalPortal {
         display: none !important;
     }
+
+    /* Make the modal body scrollable */
+.modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Set a max height for the modal body and make it scrollable */
+.modal-body {
+    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: 500px; /* Adjust the height based on your preference */
+}
+
+/* Optional: Add space between the footer and content */
+.modal-footer {
+    margin-top: auto;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #dee2e6;
+}
+
+
 </style>
 @endsection
 
@@ -27,7 +57,7 @@
                         <th>Duration</th>
                         <th>Meeting Topic</th>
                         <td>Paticipant List</td>
-                        <th>Action</th>
+                        <th colspan="2" class="text-center">Action</th>
                         
                     </tr>
                 </thead>
@@ -46,13 +76,17 @@
                             <td>{{$loop->iteration}}</td>
                             <td>{{$data['duration']}} Minutes</td>
 
-                            
                             <td>{{$data['topic']}}</td>
 
-                             <td>
-                                <a href="javascript:void(0)" onclick="showParticipantList('{{$data['id']}}')" class="btn btn-primary">Show Participant List</a>                                
+                            <td>
+                                <a href="javascript:void(0)" onclick="showParticipantList('{{$data['id']}}')" class="btn btn-primary text-white btn-sm py-2 px-4 rounded-2">Show Participant List</a>                                
                             </td>
+
                             <td><a href="javascript:void(0)" class="btn btn-primary py-2 px-4 rounded-2 text-white" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Start</a></td>
+
+                            <td>
+                                <a href="javascript:void(0)" onclick="openPollModal('{{$data['id']}}')" class="btn btn-primary text-white btn-sm py-2 px-4 rounded-2">Create Poll</a> 
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -62,28 +96,21 @@
 </div>
 
 
-<iframe class="pwa-webclient__iframe" id="webclient" src="https://app.zoom.us/wc/82044906792/join?from=pwa" role="presentation" height="600px" width="100%"></iframe>
-
-
-{{-- <iframe class="pwa-webclient__iframe" id="webclient" src="https://app.zoom.us/wc/82044906792/join?from=pwa" role="" height="600px" width="100%"></iframe> --}}
-
+{{--  Participation Modal  --}}
 
 <div class="modal fade" id="participant_modal" tabindex="-1" aria-labelledby="tabModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg"> <!-- modal-lg for wider modal -->
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal with Tabs</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+            
             <div class="modal-body">
 
                 <!-- Nav Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                      <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
+                        <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
+                        <button class="nav-link " id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
                     </li>
                    
                 </ul>
@@ -93,10 +120,9 @@
 
 
                     <!-- Table Tab -->
-                    <div class="tab-pane fade active" id="table-tab-pane" role="tabpanel">
+                    <div class="tab-pane fade show active" id="table-tab-pane" role="tabpanel">
                         <div class="table-scroll">
                             <table class="table table-bordered table-hover" id="participants_list">
-                                
                             </table>
                         </div>
                     </div>
@@ -117,6 +143,70 @@
         </div>
     </div>
 </div>
+
+
+{{--  Create Poll for a particular vendor --}}
+
+<div class="modal fade" id="poll_modal" tabindex="-1" aria-labelledby="pollModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-scrollable">
+        <div class="modal-content">
+            
+            <div class="modal-body">
+
+                <!-- Nav Tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item active" role="presentation">
+                        <button class="nav-link active" id="poll-tab" data-bs-toggle="tab" data-bs-target="#poll-tab-pane" type="button" role="tab">Create Poll</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="info-poll-tab" data-bs-toggle="tab" data-bs-target="#info-poll-tab-pane" type="button" role="tab">Poll Info</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-3">
+
+                    
+                    <!-- Create Poll Tab -->
+                    <div class="tab-pane fade show active" id="poll-tab-pane" role="tabpanel">
+                        <form id="poll-form">
+                            @csrf
+                            <input type="hidden" name="meeting_id" id="poll_meeting_id" >
+                            <div class="mb-3">
+                                <label for="poll-question" class="form-label">Poll Question</label>
+                                <input type="text" class="form-control" id="poll-question" name="question" placeholder="Enter your poll question" required>
+                            </div>
+
+                            <div id="poll-options" class="mb-3">
+                                <label class="form-label">Poll Options</label>
+                                
+                                <!-- Additional options will be added here -->
+                                <div id="additional-options"></div>
+
+                                <button type="button" id="add-option" class="btn btn-link">+ Add Option</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Poll Info Tab -->
+                    <div class="tab-pane fade" id="info-poll-tab-pane" role="tabpanel">
+                        <div id="poll_list">
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="poll-form">Save Poll</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
 
@@ -127,12 +217,13 @@
 <script src="https://source.zoom.us/4.0.5/lib/vendor/redux.min.js"></script>
 <script src="https://source.zoom.us/4.0.5/lib/vendor/redux-thunk.min.js"></script>
 <script src="https://source.zoom.us/4.0.5/zoom-meeting-4.0.5.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-2.3.4/datatables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // const ZoomMtg = window.ZoomMtg;
-    // ZoomMtg.preLoadWasm();
-    // ZoomMtg.prepareWebSDK();
 
+    
+    
     async function getSignature(meetingNumber, role) {
         // Call Laravel API route
         const response = await fetch("{{ url('/api/zoom-signature') }}", {
@@ -172,10 +263,6 @@
     }
 
         
-</script>
-
-
-<script>
     document.addEventListener("DOMContentLoaded", function () {
         const targetNode = document.getElementById('zmmtg-root');
         
@@ -195,11 +282,9 @@
     
         observer.observe(targetNode, { childList: true, subtree: true });
     });
-    </script>
-
-    <script>
-        function showParticipantList(meetingNumber)
- {
+    
+    function showParticipantList(meetingNumber)
+    {
     const csrfToken = "{{ csrf_token() }}";
     $.ajax({
          headers: {'X-CSRF-TOKEN': csrfToken},
@@ -210,13 +295,78 @@
         },
         success: function(response) {
             $("#participant_modal").modal('show');
-            $("#participants_list").html(response.data.participants);
-             let tabTrigger = new bootstrap.Tab(document.querySelector('#table-tab'));
-    tabTrigger.show();
+            $("#participants_list").html(response.data.participants);            
+            
+            setTimeout(function () {
+                if ($.fn.DataTable.isDataTable('#participants_list')) {
+                    $('#participants_list').DataTable().destroy();  // Destroy previous DataTable instance
+                }
+                $('#participants_list').DataTable();  // Initialize DataTable
+            }, 100); 
+            
         },
     });
  }
 
+
+
+ $('#add-option').on('click', function() {
+    const optionCount = $('.form-check').length + 1; // Count existing options
+    const newOption = `<div class="form-group"><input class="form-control" type="text" name="polloption[]" id="poll-option-${optionCount}" placeholder="Enter Option" required></div>`;
+
+    $('#additional-options').append(newOption); // Add the new option to the container
+});
+
+ function openPollModal(meeting_id)
+ {
+    $("#poll_meeting_id").val(meeting_id);
+    $("#poll_modal").modal('show');
+ }
+
+
+
+ // store poll data
+ $('#poll-form').on('submit', function(e) {
+    e.preventDefault();  
+    var formData = $("#poll-form").serialize();
+    $.ajax({
+        url: '{{ route("vendor-poll-submission") }}',  // The route where we will send data
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            Swal.fire({
+                title: "Good job!",
+                text: "Poll Created!",
+                icon: "success"
+                });
+
+            $("#poll-form").trigger("reset");
+        },
+        error: function(xhr, status, error) {
+            
+            Swal.fire({
+                icon: "error",
+                text: "Something went wrong!",
+                
+                });
+        }
+    });
+});
+
+$("#poll-tab").click(function(){
+    $("#poll-form").trigger("reset");    
+});
+
+$("#info-poll-tab").click(function(){
+    var meeting_id = $("#poll_meeting_id").val();
+    $.ajax({
+        // url: '{{ route("vendor-poll-list",'+meeting_id+') }}',
+        url: '/vendor-poll-list/' + meeting_id,
+        success: function(response) {
+            $("#poll_list").html(response.data);        
+        }
+    });
+});
     </script>
 
 @endsection

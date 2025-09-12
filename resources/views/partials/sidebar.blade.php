@@ -25,7 +25,7 @@
 
     <hr class="sidebar-divider">
 
-    <li class="nav-item @if(Request::is('vendor')) active @endif">
+    <li class="nav-item @if(Request::is('vendors')) active @endif">
         <a class="nav-link" href="{{ route('vendor') }}">
             <i class="fas fa-fw fa-table"></i>
             <span>Vendor</span>
@@ -39,7 +39,7 @@
         </a>
     </li>
 
-     <li class="nav-item @if(Request::is('meeting')) active @endif">
+     <li class="nav-item @if(Request::is('meetings/*')) active @endif">
         <a class="nav-link" href="{{route('meeting','scheduled')}}">
             <i class="fas fa-fw fa-table"></i>
             <span>List Of Meetings</span>

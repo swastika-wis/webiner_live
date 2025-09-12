@@ -46,17 +46,23 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::get('/create-meeting', [MeetingController::class, 'create'])->name('create-meeting');
     Route::post('/store-meeting', [MeetingController::class, 'store'])->name('store-meeting');
 
-    
+    Route::get('update-participant-status/{status}/{id}',[WebUserController::class,"update_participant_status"])->name('update-participant-status');
 });
 
 
 Route::middleware(['participateGroup'])->group(function () {
     Route::get('/user-dashboard',[WebUserController::class,"dashboard"])->name('user-dashboard');
+    Route::get('join-meeting/{meeting_id}',[WebUserController::class,"join_meeting"])->name('join-meeting');
+    Route::post('/user-poll-submission',[WebUserController::class,"user_poll_submission"])->name('user-poll-submission');
+    Route::get('/poll-list',[WebUserController::class,"poll_list"])->name('poll.list');
+
 });
 
 
 
 Route::middleware(['vendorGroup'])->group(function () {
     Route::get('/vendor-dashboard',[WebvendorController::class,"dashboard"])->name('vendor-dashboard');
+    Route::post('/vendor-poll-submission',[WebvendorController::class,"vendor_poll_submission"])->name('vendor-poll-submission');
+    Route::get('/vendor-poll-list/{meeting_number}',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
     
 });
