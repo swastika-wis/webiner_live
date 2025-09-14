@@ -40,22 +40,43 @@
     </li>
 
      <li class="nav-item @if(Request::is('meetings/*')) active @endif">
-        <a class="nav-link" href="{{route('meeting','scheduled')}}">
+            <a class="nav-link" href="{{route('meeting','scheduled')}}">
+                <i class="fas fa-fw fa-table"></i>
+                <span>List Of Meetings</span>
+            </a>
+    </li>
+@endif
+
+  
+
+   
+
+
+    @if( Auth::guard('vendoruser'))
+    <li class="nav-item @if(Request::is('vendor-dashboard')) active @endif">
+        <a class="nav-link" href="{{route('vendor-dashboard')}}">
             <i class="fas fa-fw fa-table"></i>
-            <span>List Of Meetings</span>
+            <span>List Of Meetings </span>
         </a>
     </li>
 
+     
+    
+     {{-- <li class="nav-item @if(Request::is('vendor-polls')) active @endif">
+        <a class="nav-link" href="{{route('vendor-create-poll',$data['id'])}}" >
+             <i class="fas fa-fw fa-table"></i>
+            <span>Create Poll<span></a>
+    </li> --}}
 
-    @elseif(Auth::guard('webuser'))
-    <li class="nav-item @if(Request::is('meeting')) active @endif">
-        <a class="nav-link" href="{{route('meeting','scheduled')}}">
+    <li class="nav-item @if(Request::is('vendor-poll-list')) active @endif">
+        <a class="nav-link" href="{{route('vendor-poll-list')}}">
             <i class="fas fa-fw fa-table"></i>
-            <span>List Of Meetings</span>
+            <span>All Polls </span>
         </a>
     </li>
 
     @endif
+
 
     {{-- <li class="nav-item">
         <a class="nav-link" href="#">

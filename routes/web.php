@@ -47,6 +47,8 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::post('/store-meeting', [MeetingController::class, 'store'])->name('store-meeting');
 
     Route::get('update-participant-status/{status}/{id}',[WebUserController::class,"update_participant_status"])->name('update-participant-status');
+    Route::get('update-participant-password/{id}',[WebUserController::class,"update_participant_password"])->name('update-participant-password');
+
 });
 
 
@@ -55,14 +57,17 @@ Route::middleware(['participateGroup'])->group(function () {
     Route::get('join-meeting/{meeting_id}',[WebUserController::class,"join_meeting"])->name('join-meeting');
     Route::post('/user-poll-submission',[WebUserController::class,"user_poll_submission"])->name('user-poll-submission');
     Route::get('/poll-list',[WebUserController::class,"poll_list"])->name('poll.list');
-
+    Route::get('user-upadtepassword',[WebUserController::class,"upadtepassword"])->name('user-upadtepassword');
+    Route::post('/user-change-password',[WebUserController::class,"change_password"])->name('user-change-password');
+    
 });
 
 
 
 Route::middleware(['vendorGroup'])->group(function () {
     Route::get('/vendor-dashboard',[WebvendorController::class,"dashboard"])->name('vendor-dashboard');
+    Route::get('/create-poll/{meeting_id}',[WebvendorController::class,"vendor_create_poll"])->name('vendor-create-poll');
     Route::post('/vendor-poll-submission',[WebvendorController::class,"vendor_poll_submission"])->name('vendor-poll-submission');
-    Route::get('/vendor-poll-list/{meeting_number}',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
+    Route::get('/vendor-poll-list',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
     
 });

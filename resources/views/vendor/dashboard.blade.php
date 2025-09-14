@@ -85,7 +85,9 @@
                             <td><a href="javascript:void(0)" class="btn btn-primary py-2 px-4 rounded-2 text-white" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')">Start</a></td>
 
                             <td>
-                                <a href="javascript:void(0)" onclick="openPollModal('{{$data['id']}}')" class="btn btn-primary text-white btn-sm py-2 px-4 rounded-2">Create Poll</a> 
+                                {{-- <a href="javascript:void(0)" onclick="openPollModal('{{$data['id']}}')" class="btn btn-primary text-white btn-sm py-2 px-4 rounded-2">Create Poll</a>  --}}
+
+                                <a href="{{route('vendor-create-poll',$data['id'])}}" class="btn btn-primary text-white btn-sm py-2 px-4 rounded-2">Create Poll</a>
                             </td>
                         </tr>
                     @endforeach
@@ -98,47 +100,109 @@
 
 {{--  Participation Modal  --}}
 
-<div class="modal fade" id="participant_modal" tabindex="-1" aria-labelledby="tabModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- modal-lg for wider modal -->
+<div class="modal fade" id="poll_modal" tabindex="-1" aria-labelledby="pollModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-scrollable">
         <div class="modal-content">
             
+            <div class="modal-header">
+                <h5 class="modal-title" id="pollModalLabel">Create Poll</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
             <div class="modal-body">
 
                 <!-- Nav Tabs -->
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
+                <ul class="nav nav-tabs" id="pollTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#create-tab-pane" type="button" role="tab">Create Poll</button>
+
+                        
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link " id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
+                        <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Poll Info</button>
                     </li>
-                   
                 </ul>
 
                 <!-- Tab Content -->
                 <div class="tab-content mt-3">
 
+                    <!-- Create Poll Tab -->
+                    <div class="tab-pane fade show active" id="create-tab-pane" role="tabpanel">
+                        <form id="poll-form">
+                            @csrf
+                            <input type="hidden" name="meeting_id" id="poll_meeting_id">
 
-                    <!-- Table Tab -->
-                    <div class="tab-pane fade show active" id="table-tab-pane" role="tabpanel">
-                        <div class="table-scroll">
-                            <table class="table table-bordered table-hover" id="participants_list">
-                            </table>
-                        </div>
+                            <!-- Poll Meta -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="poll-title" class="form-label">Poll Title</label>
+                                    <input type="text" class="form-control" id="poll-title" name="title" placeholder="Enter poll title" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="poll-start" class="form-label">Start Time</label>
+                                    <input type="datetime-local" class="form-control" id="poll-start" name="start_time">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="poll-end" class="form-label">End Time</label>
+                                    <input type="datetime-local" class="form-control" id="poll-end" name="end_time">
+                                </div>
+                            </div>
+
+                            <!-- Questions Section -->
+                            <div id="questions-container">
+                                <!-- One question block -->
+                                <div class="question-block border rounded p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">Question 1</h6>
+                                        <button type="button" class="btn btn-sm btn-danger remove-question d-none">Remove</button>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Question Type</label>
+                                        <select class="form-select question-type" name="questions[0][type]">
+                                            <option value="text">Text</option>
+                                            <option value="image">Image</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3 question-text">
+                                        <label class="form-label">Question Text</label>
+                                        <input type="text" class="form-control" name="questions[0][text]" placeholder="Enter your question">
+                                    </div>
+
+                                    <div class="mb-3 question-image d-none">
+                                        <label class="form-label">Upload Image</label>
+                                        <input type="file" class="form-control" name="questions[0][image]">
+                                    </div>
+
+                                    <!-- Options -->
+                                    <div class="options-container">
+                                        <label class="form-label">Options</label>
+                                        <div class="option-item input-group mb-2">
+                                            <input type="text" class="form-control" name="questions[0][options][]" placeholder="Enter option">
+                                            <button type="button" class="btn btn-outline-danger remove-option">X</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-link add-option">+ Add Option</button>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-outline-primary mt-2" id="add-question">+ Add Question</button>
+                        </form>
                     </div>
 
-                    <!-- Info Tab -->
-                    <div class="tab-pane fade show " id="info-tab-pane" role="tabpanel">
-                        <p>This is some informational content in the first tab.</p>
+                    <!-- Poll Info Tab -->
+                    <div class="tab-pane fade" id="info-tab-pane" role="tabpanel">
+                        <div id="poll_list"></div>
                     </div>
-
                     
                 </div>
 
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary" form="poll-form">Save Poll</button>
             </div>
         </div>
     </div>
@@ -285,37 +349,28 @@
     
     function showParticipantList(meetingNumber)
     {
-    const csrfToken = "{{ csrf_token() }}";
-    $.ajax({
-         headers: {'X-CSRF-TOKEN': csrfToken},
-        url: "{{ route('partcipant-list') }}",
-        method: 'POST',
-        data: {
-            meeting_number: meetingNumber
-        },
-        success: function(response) {
-            $("#participant_modal").modal('show');
-            $("#participants_list").html(response.data.participants);            
-            
-            setTimeout(function () {
-                if ($.fn.DataTable.isDataTable('#participants_list')) {
-                    $('#participants_list').DataTable().destroy();  // Destroy previous DataTable instance
-                }
-                $('#participants_list').DataTable();  // Initialize DataTable
-            }, 100); 
-            
-        },
-    });
- }
-
-
-
- $('#add-option').on('click', function() {
-    const optionCount = $('.form-check').length + 1; // Count existing options
-    const newOption = `<div class="form-group"><input class="form-control" type="text" name="polloption[]" id="poll-option-${optionCount}" placeholder="Enter Option" required></div>`;
-
-    $('#additional-options').append(newOption); // Add the new option to the container
-});
+        const csrfToken = "{{ csrf_token() }}";
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': csrfToken},
+            url: "{{ route('partcipant-list') }}",
+            method: 'POST',
+            data: {
+                meeting_number: meetingNumber
+            },
+            success: function(response) {
+                $("#participant_modal").modal('show');
+                $("#participants_list").html(response.data.participants);            
+                
+                setTimeout(function () {
+                    if ($.fn.DataTable.isDataTable('#participants_list')) {
+                        $('#participants_list').DataTable().destroy();  // Destroy previous DataTable instance
+                    }
+                    $('#participants_list').DataTable();  // Initialize DataTable
+                }, 100); 
+                
+            },
+        });
+    }
 
  function openPollModal(meeting_id)
  {
@@ -358,16 +413,100 @@ $("#poll-tab").click(function(){
 });
 
 $("#info-poll-tab").click(function(){
-    var meeting_id = $("#poll_meeting_id").val();
-    $.ajax({
-        // url: '{{ route("vendor-poll-list",'+meeting_id+') }}',
-        url: '/vendor-poll-list/' + meeting_id,
-        success: function(response) {
-            $("#poll_list").html(response.data);        
+        var meeting_id = $("#poll_meeting_id").val();
+        $.ajax({
+            // url: '{{ route("vendor-poll-list",'+meeting_id+') }}',
+            url: '/vendor-poll-list/' + meeting_id,
+            success: function(response) {
+                $("#poll_list").html(response.data);        
+            }
+        });
+    });
+</script>
+
+
+<script>
+$(document).ready(function () {
+    let questionIndex = 0; // Track question number
+
+    // Add Question
+    $("#add-question").click(function () {
+        questionIndex++;
+        let questionHtml = `
+        <div class="question-block border rounded p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Question ${questionIndex + 1}</h6>
+                <button type="button" class="btn btn-sm btn-danger remove-question">Remove</button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Question Type</label>
+                <select class="form-select question-type" name="questions[${questionIndex}][type]">
+                    <option value="text">Text</option>
+                    <option value="image">Image</option>
+                </select>
+            </div>
+
+            <div class="mb-3 question-text">
+                <label class="form-label">Question Text</label>
+                <input type="text" class="form-control" name="questions[${questionIndex}][text]" placeholder="Enter your question">
+            </div>
+
+            <div class="mb-3 question-image d-none">
+                <label class="form-label">Upload Image</label>
+                <input type="file" class="form-control" name="questions[${questionIndex}][image]">
+            </div>
+
+            <!-- Options -->
+            <div class="options-container">
+                <label class="form-label">Options</label>
+                <div class="option-item input-group mb-2">
+                    <input type="text" class="form-control" name="questions[${questionIndex}][options][]" placeholder="Enter option">
+                    <button type="button" class="btn btn-outline-danger remove-option">X</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-link add-option">+ Add Option</button>
+        </div>`;
+
+        $("#questions-container").append(questionHtml);
+    });
+
+    // Remove Question
+    $(document).on("click", ".remove-question", function () {
+        $(this).closest(".question-block").remove();
+    });
+
+    // Add Option
+    $(document).on("click", ".add-option", function () {
+        let container = $(this).siblings(".options-container");
+        let questionIdx = container.closest(".question-block").index(); // get current question index
+        let optionHtml = `
+            <div class="option-item input-group mb-2">
+                <input type="text" class="form-control" name="questions[${questionIdx}][options][]" placeholder="Enter option">
+                <button type="button" class="btn btn-outline-danger remove-option">X</button>
+            </div>`;
+        container.append(optionHtml);
+    });
+
+    // Remove Option
+    $(document).on("click", ".remove-option", function () {
+        $(this).closest(".option-item").remove();
+    });
+
+    // Toggle Question Type (text / image)
+    $(document).on("change", ".question-type", function () {
+        let block = $(this).closest(".question-block");
+        if ($(this).val() === "text") {
+            block.find(".question-text").removeClass("d-none");
+            block.find(".question-image").addClass("d-none");
+        } else {
+            block.find(".question-text").addClass("d-none");
+            block.find(".question-image").removeClass("d-none");
         }
     });
 });
-    </script>
+</script>
+
 
 @endsection
 

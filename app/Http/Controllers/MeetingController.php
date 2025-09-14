@@ -109,7 +109,8 @@ class MeetingController extends Controller
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>Action</th>
+                                        <th>Change Status</th>
+                                        <th>Change Password</th>
                                     </tr>
                                 </thead>
                                 <tbody>';
@@ -126,12 +127,20 @@ class MeetingController extends Controller
                     'id' => $participant->id
                 ]);
 
+            $password_url = route('update-participant-password', [
+                    'id' => $participant->id
+                ]);
+            
+
+            
+
             $participants.="<tr>
                 <td>".$i++."</td>
                 <td>".$participant->full_name."</td>
                 <td>".$participant->email."</td>
                 <td>".$participant->phone."</td>
                 <td><a class='btn btn-info' href='" . $url . "' onclick=' return confirm(`Are you sure?`)'>Make " . $message . "</a></td>
+                <td><a class='btn btn-info' href='" . $password_url . "' onclick=' return confirm(`Are you sure?`)'> Set Default Password </a></td>
             </tr>";
         }
 

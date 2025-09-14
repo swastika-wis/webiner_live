@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Login Form</title>
+  <title>Update Password</title>
 
   <!-- Custom fonts for this template-->
   <link href="{{asset('/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -45,30 +45,20 @@
 
                      @include('components.alerts')
                      
-                    <h3 class="text-theme fw-semibold mb-3 mb-lg-4">Participant Login!</h3>
+                    <h3 class="text-theme fw-semibold mb-3 mb-lg-4">Set Password!</h3>
                   </div>
-                  <form class="user needs-validation" novalidate action="{{route('user-validate')}}" method="POST" >
+                  <form class="user needs-validation" novalidate action="{{route('user-change-password')}}" method="POST" >
                     @csrf
+                    <input type="hidden" name="id" value="{{session('webuser')->id}}">
                     <div class="form-group">
-                      <input type="text" class="form-control" aria-describedby="email" required placeholder="Enter Phone Number" name="phone">
+                      <input type="password" class="form-control" aria-describedby="email" required placeholder="Enter Password" name="password">
                     </div>
 
-                    <div class="form-group">
-                      <input type="password" class="form-control" name="password"  placeholder="Password" required>
-                    </div> 
-
-                    <button class="btn btn-primary py-2 py-lg-3 btn-block" name="signupSubmit"  value="signupSubmit">Login</button>
-
-                   
-                   
+                  
+                    <button class="btn btn-primary py-2 py-lg-3 btn-block" name="signupSubmit"  value="signupSubmit">Update</button>
                    
                   </form>
-                  <hr>
-                  <div class="text-center">
-                      New Registration, Please connect with Admin 
-                  </div>
-                  <div class="text-center">
-                  </div>
+                 
                 </div>
               </div>
             </div>

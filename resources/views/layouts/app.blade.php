@@ -23,7 +23,9 @@
 <body id="page-top">
     <div id="wrapper">
         {{-- Sidebar --}}
-        @include('partials.sidebar')
+        @if(!session('webuser'))
+            @include('partials.sidebar')
+        @endif
 
         {{-- Content Wrapper --}}
         <div id="content-wrapper" class="d-flex flex-column">

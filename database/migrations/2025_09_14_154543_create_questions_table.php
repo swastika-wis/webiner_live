@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('polls', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('meeting_number',100);
-            $table->string('title');
-            $table->timestamp('start_time')->nullable();
-            $table->timestamp('end_time')->nullable();
+            $table->foreignId('poll_id')->constrained()->onDelete('cascade');
+            $table->string('question_type'); // text, image
+            $table->text('question_text')->nullable();
+            $table->string('question_image')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('polls');
+        Schema::dropIfExists('questions');
     }
 };

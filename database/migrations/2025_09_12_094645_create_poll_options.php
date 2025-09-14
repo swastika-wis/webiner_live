@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('poll_options', function (Blueprint $table) {
+        Schema::create('options', function (Blueprint $table) {
             $table->id();
             $table->integer('poll_id');
-            $table->string('option');
+            $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            $table->string('option_text')->nullable();
+            $table->string('option_image')->nullable();
             $table->integer('votes_count')->default(0);
             $table->timestamps();
             $table->softDeletes();

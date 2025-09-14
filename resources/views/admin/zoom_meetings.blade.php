@@ -93,7 +93,7 @@
 
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Dropdown button  </button>
+                                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Action </button>
                                     
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         

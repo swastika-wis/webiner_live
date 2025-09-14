@@ -10,6 +10,11 @@ class PollOptionModel extends Model
 {
     use SoftDeletes;
 
-    protected $table="poll_options";
+    protected $table="options";
     protected $guarded=[];
+
+    public function question()
+    {
+        return $this->belongsTo(PollQuestionModel::class, 'question_id');
+    }
 }

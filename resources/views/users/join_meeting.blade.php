@@ -44,38 +44,16 @@
         <div class="pwa-webclient" style="z-index: 30000; width: 70%; height: 100%; top: 0px; left: 0px;">
             
             <div class="pwa-webclient__iframe-wrapper" style="position: relative;">
+                
                 <iframe class="pwa-webclient__iframe" width="100%" height="500px" id="webclient"
-                    src="https://app.zoom.us/wc/{{$meeting->meeting_number}}/join?pwd={{$password[1]}}&amp;from=pwa"
+                    src="https://app.zoom.us/wc/{{$meeting->meeting_number}}/join?pwd={{$password[1]}}&amp;from=pwa&amp;uname={{session('webuser')->full_name}}"
                     role="presentation"></iframe>
                     <div class="bottom-hide"></div>
             </div>
         </div>
 
         <div class="pwa-webclient" style="position: absolute; z-index: 999; width: 27%; height: 100%; top: 50px; right: 0px;">
-          <div class="poll-list" id="pollList">
-
-             <h5 class="m-0 font-weight-bold text-theme">Polls</h5>
-                <form id="user_poll">
-                    @csrf
-                    <input type="hidden" value="{{session('webuser')->id}}" name="participant_id">
-                    @foreach($meeting_polls as $poll)
-
-                            <h4 class="mt-3">{{$poll->question}}</h4>
-                            <input type="hidden" value="{{$loop->iteration}}" name="poll_{{$loop->iteration}}">
-
-
-                            @foreach($poll->options as $option)
-                                <div>  <input type="radio" 
-                                    name="poll_option_{{ $poll->id }}"  
-                                    value="{{ $option->id }}" />
-                                    {{$option->option}} </div>
-                            @endforeach
-                    @endforeach
-
-                    <button type="submit" class="btn btn-success mt-3">Save</button>
-                </form>
-
-
+          <div class="poll-list" id="pollList">          
             </div>
           </div>
 
@@ -87,8 +65,11 @@
 @section('extra_js')
 <script src="{{asset('/assets/js/jquery-3.7.1.min.js')}}"></script>
 <script>
-  document.querySelector("#webclient").contentWindow
-    .document.getElementById("input-for-name").value = "John Doe";
+//   document.querySelector("#webclient").contentWindow
+//     .document.getElementById("input-for-name").value = "John Doe";
+
+
+
 </script>
 
 {{-- <script>
@@ -175,6 +156,8 @@
         attachSubmitHandler(); // bind first time
         setInterval(refreshPolls, 20000); // auto refresh every 20 sec
     });
+
+    
     </script>
 
 
