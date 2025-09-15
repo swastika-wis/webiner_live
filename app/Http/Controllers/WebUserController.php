@@ -6,6 +6,7 @@ use App\Models\MeetingModel;
 use App\Models\Participent;
 use App\Models\PollModel;
 use App\Models\PollOptionModel;
+use App\Models\QNAModel;
 use App\Models\UserPollModel;
 use App\Models\WebUser;
 use Illuminate\Http\Request;
@@ -133,28 +134,53 @@ class WebUserController extends Controller
 
     public function user_poll_submission(Request $request)
     {
-        foreach ($request->all() as $key => $value) {
-            if (str_starts_with($key, 'poll_option_')) {
-                $pollId = str_replace('poll_option_', '', $key);
-                $record = new UserPollModel();
-                $record->paticipant_id = $request->participant_id;
-                $record->poll_id = $request->poll_ . "" . $pollId;
-                $record->poll_option_id = $value;
-                $record->save();
+        foreach ($request->questions as $q) {
+            // Insert into user_polls table
+            UserPollModel::create([
+                'paticipant_id' => $request->participant_id,
+                'question_id'   => $q['question_id'],
+                'option_id'     => $q['option_id'],
+            ]);
 
-                PollOptionModel::where('id', $value)->increment('votes_count');
-            }
+            // Update vote count in options table
+            PollOptionModel::where('id', $q['option_id'])->increment('votes_count');
         }
-
         return response(['message' => 'success'], 200);
     }
 
 
 
 
-    public function poll_list()
+    public function poll_list(Request $request)
     {
-        $polls = PollModel::get();
-        return view('users.poll-list', compact('polls'))->render();
+        // $polls = PollModel::get();
+        // return view('users.poll-list', compact('polls'))->render();
+
+        $participant_id = $request->session()->get('webuser')->id; 
+        
+    // Get IDs of questions answered by the user
+    $answeredQuestionIds = UserPollModel::where('paticipant_id', $participant_id)
+        ->pluck('question_id')
+        ->toArray();
+
+    // Get polls where at least one question has NOT been answered by the user
+    $polls = PollModel::whereHas('questions', function ($query) use ($answeredQuestionIds) {
+            if (!empty($answeredQuestionIds)) {
+                $query->whereNotIn('id', $answeredQuestionIds);
+            }
+        })
+        ->with('questions.options') // Optional: preload questions/options
+        ->get();
+
+    return view('users.poll-list', compact('polls'))->render();
+
     }
+
+    public function qna_list($ask_by)
+    {
+        $qna_list  =QNAModel::where('ask_by',$ask_by)->get();
+        return view('users.qna-list', compact('qna_list'))->render();
+        
+    }
+
 }

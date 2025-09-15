@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\QNAController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebUserController;
 use App\Http\Controllers\WebvendorController;
@@ -32,6 +33,9 @@ Route::post('/vendor-validate',[WebvendorController::class,"vendor_validate"])->
 /////// show participant list
 Route::post('/get-participant',[MeetingController::class,"participant_list"])->name('partcipant-list');
 
+
+Route::get('parti',[MeetingController::class,"getLiveParticipants"])->name('partcipant-live');
+
 Route::middleware(['webuserGroup'])->group(function () {
     
     Route::get('/dashboard',[LoginController::class,"dashboard"])->name('dashboard');
@@ -59,6 +63,11 @@ Route::middleware(['participateGroup'])->group(function () {
     Route::get('/poll-list',[WebUserController::class,"poll_list"])->name('poll.list');
     Route::get('user-upadtepassword',[WebUserController::class,"upadtepassword"])->name('user-upadtepassword');
     Route::post('/user-change-password',[WebUserController::class,"change_password"])->name('user-change-password');
+
+    Route::post('/user-qna-submission',[QNAController::class,"user_qna_submission"])->name('user-qna-submission');
+
+    Route::get('/qna-list/{ask_by}',[WebUserController::class,"qna_list"])->name('qna.list');
+
     
 });
 
@@ -69,5 +78,8 @@ Route::middleware(['vendorGroup'])->group(function () {
     Route::get('/create-poll/{meeting_id}',[WebvendorController::class,"vendor_create_poll"])->name('vendor-create-poll');
     Route::post('/vendor-poll-submission',[WebvendorController::class,"vendor_poll_submission"])->name('vendor-poll-submission');
     Route::get('/vendor-poll-list',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
-    
+    Route::get('/vendor-qna-list',[WebvendorController::class,"vendor_qna_list"])->name('vendor-qna-list');
+
+    Route::post('/vendor-qna-submission',[QNAController::class,"vendor_qna_submission"])->name('vendor-qna-submission');
+
 });

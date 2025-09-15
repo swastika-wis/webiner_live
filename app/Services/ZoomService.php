@@ -52,4 +52,23 @@ class ZoomService
         return $response->json()['meetings'] ?? [];
     }
 
+    public function getActiveParticipants()
+    {
+        $accessToken = $this->getAccessToken();
+        dd($accessToken);
+
+        $meeting_id="84731313101";
+        $response = Http::withToken($accessToken)
+        ->get("https://api.zoom.us/v2/metrics/meetings/".$meeting_id."/participants?type=live");
+
+        dd($response->json());
+
+        if ($response->failed()) {
+            return [];
+        }
+
+        return $response->json()['meetings'] ?? [];
+
+    }
+
 }

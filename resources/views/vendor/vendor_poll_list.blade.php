@@ -33,7 +33,12 @@
 
             @foreach($poll->questions as $question)
                 <div class="mb-4">
-                    <h6>Q{{ $loop->iteration }}. {{ $question->question_text }}</h6>
+
+                    @if($question->question_type === 'image' && $question->question_image)
+                    Q{{ $loop->iteration }}. <img src="{{ asset('public/storage/' . $question->question_image) }}" style="height:200px" alt="Question Image" class="img-fluid">
+                    @else 
+                        <h6>Q{{ $loop->iteration }}. {{ $question->question_text }}</h6>
+                    @endif                    
 
                     @foreach($question->options as $option)
                         @php

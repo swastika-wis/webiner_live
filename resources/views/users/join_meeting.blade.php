@@ -56,9 +56,25 @@
           <div class="poll-list" id="pollList">          
             </div>
           </div>
+        </div>
 
 
-    </div>
+
+        <div>
+            <p>Question and Answer Box</p>
+            <div id="qna_alert"></div>
+            <form id="user_qna">
+                @csrf
+                <input type="hidden" name="meeting_id" value="{{$meeting->meeting_number}}">
+                <input type="hidden" name="participant_id" value="{{session('webuser')->id}}">
+                Ask Question <textarea name="user_question" id="question_box" cols="30" rows="10"></textarea> 
+                <button type="submit">Save</button>
+            </form>
+
+            <div id="qnabox">
+
+            </div>
+        </div>
 </div>
 @endsection
 
@@ -152,11 +168,53 @@
                 }
             });
         }
-    
-        attachSubmitHandler(); // bind first time
-        setInterval(refreshPolls, 20000); // auto refresh every 20 sec
+
+        function refreshQNA(){
+
+            $.ajax({
+                url: "{{ route('qna.list',session('webuser')->id) }}",
+                method: "GET",
+                success: function (html) {
+                    $("#qnabox").html(html);                    
+                },
+                error: function () {
+                    console.error("Error refreshing polls");
+                }
+            });
+
+        }        
+        attachSubmitHandler(); 
+        setInterval(refreshPolls, 20000); 
+        setInterval(refreshQNA, 20000); 
+
     });
 
+
+    $("#user_qna").on("submit",function(e){
+        e.preventDefault();
+
+
+        var formData = $(this).serialize();
+    
+        $.ajax({
+            url: '{{ route("user-qna-submission") }}',  // Your controller route
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                $("#question_box").val("");
+                    $("#qna_alert").html(`
+            <div style="padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;">
+                Question submitted successfully!
+            </div>
+        `).fadeIn();
+
+        // Auto-hide the message after 3 seconds
+        setTimeout(function() {
+            $("#qna_alert").fadeOut();
+        }, 3000);
+            }
+        });
+    });
     
     </script>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MeetingModel;
 use App\Models\PollModel;
 use App\Models\PollOptionModel;
+use App\Models\QNAModel;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,14 +69,37 @@ class WebvendorController extends Controller
         ]);
 
         // 2. Create questions
-        foreach ($request->questions as $qIndex => $qData) {
-            $question = $poll->questions()->create([
-                'question_type' => $qData['type'],
-                'question_text' => $qData['text'] ?? null,
-                'question_image' => $qData['image'] ?? null,
-            ]);
+        // foreach ($request->questions as $qIndex => $qData) {
+        //     $question = $poll->questions()->create([
+        //         'question_type' => $qData['type'],
+        //         'question_text' => $qData['text'] ?? null,
+        //         'question_image' => $qData['image'] ?? null,
+        //     ]);
 
-            // 3. Create options
+        //     // 3. Create options
+        //     if (!empty($qData['options'])) {
+        //         foreach ($qData['options'] as $optionText) {
+        //             $question->options()->create([
+        //                 'option_text' => $optionText,
+        //             ]);
+        //         }
+        //     }
+        // }
+
+        foreach ($request->questions as $qIndex => $qData) {
+            // Handle image upload
+            $imagePath = null;
+            if ($qData['type'] === 'image' && isset($qData['image']) && $qData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                $imagePath = $qData['image']->store('poll_images', 'public'); // Store in 'storage/app/public/poll_images'
+            }
+        
+            $question = $poll->questions()->create([
+                'question_type'  => $qData['type'],
+                'question_text'  => $qData['text'] ?? null,
+                'question_image' => $imagePath,
+            ]);
+        
+            // Create options
             if (!empty($qData['options'])) {
                 foreach ($qData['options'] as $optionText) {
                     $question->options()->create([
@@ -139,5 +163,17 @@ class WebvendorController extends Controller
     public function vendor_create_poll($meeting_id)
     {
         return view('vendor.vendor_create_poll', compact('meeting_id'));
+    }
+
+
+    public function vendor_qna_list(Request $request)
+    {
+        $vendor_id = $request->session()->get('vendoruser')->id;
+        
+        $meeting=MeetingModel::where('vendor_id',$vendor_id)->first();
+        $meeting_number  = $meeting->meeting_number;
+
+        $qna_list = QNAModel::where('meeting_id',$meeting_number)->get();
+        return view('vendor.vendor_qna_list',compact('qna_list'));
     }
 }

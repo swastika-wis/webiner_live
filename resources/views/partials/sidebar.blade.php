@@ -75,6 +75,13 @@
         </a>
     </li>
 
+    <li class="nav-item @if(Request::is('vendor-qna-list')) active @endif">
+        <a class="nav-link" href="{{route('vendor-qna-list')}}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Question and Answers </span>
+        </a>
+    </li>
+
     @endif
 
 

@@ -109,9 +109,12 @@ class MeetingController extends Controller
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>Change Status</th>
-                                        <th>Change Password</th>
-                                    </tr>
+                                        <th>Change Status</th>';
+
+        if(!session('vendoruser'))
+            $participants.='<th>Change Password</th>';
+
+        $participants.='</tr>
                                 </thead>
                                 <tbody>';
         $i=1;
@@ -140,8 +143,11 @@ class MeetingController extends Controller
                 <td>".$participant->email."</td>
                 <td>".$participant->phone."</td>
                 <td><a class='btn btn-info' href='" . $url . "' onclick=' return confirm(`Are you sure?`)'>Make " . $message . "</a></td>
-                <td><a class='btn btn-info' href='" . $password_url . "' onclick=' return confirm(`Are you sure?`)'> Set Default Password </a></td>
-            </tr>";
+                ";
+            if(!session('vendoruser'))
+            $participants.="<td><a class='btn btn-info' href='" . $password_url . "' onclick=' return confirm(`Are you sure?`)'> Set Default Password </a></td>";
+            
+            $participants.="</tr>";
         }
 
         $participants.='</tbody>';
@@ -153,5 +159,10 @@ class MeetingController extends Controller
             ]
             
         ]);
+    }
+
+    public function getLiveParticipants()
+    {
+        $this->zoomService->getActiveParticipants();
     }
 }

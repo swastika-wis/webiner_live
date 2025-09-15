@@ -98,173 +98,53 @@
 </div>
 
 
-{{--  Participation Modal  --}}
 
-<div class="modal fade" id="poll_modal" tabindex="-1" aria-labelledby="pollModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-scrollable">
+<div class="modal fade" id="participant_modal" tabindex="-1" aria-labelledby="tabModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"> <!-- modal-lg for wider modal -->
         <div class="modal-content">
-            
-            <div class="modal-header">
-                <h5 class="modal-title" id="pollModalLabel">Create Poll</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <!-- Nav Tabs -->
-                <ul class="nav nav-tabs" id="pollTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#create-tab-pane" type="button" role="tab">Create Poll</button>
-
-                        
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Poll Info</button>
-                    </li>
-                </ul>
-
-                <!-- Tab Content -->
-                <div class="tab-content mt-3">
-
-                    <!-- Create Poll Tab -->
-                    <div class="tab-pane fade show active" id="create-tab-pane" role="tabpanel">
-                        <form id="poll-form">
-                            @csrf
-                            <input type="hidden" name="meeting_id" id="poll_meeting_id">
-
-                            <!-- Poll Meta -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="poll-title" class="form-label">Poll Title</label>
-                                    <input type="text" class="form-control" id="poll-title" name="title" placeholder="Enter poll title" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="poll-start" class="form-label">Start Time</label>
-                                    <input type="datetime-local" class="form-control" id="poll-start" name="start_time">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="poll-end" class="form-label">End Time</label>
-                                    <input type="datetime-local" class="form-control" id="poll-end" name="end_time">
-                                </div>
-                            </div>
-
-                            <!-- Questions Section -->
-                            <div id="questions-container">
-                                <!-- One question block -->
-                                <div class="question-block border rounded p-3 mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="mb-0">Question 1</h6>
-                                        <button type="button" class="btn btn-sm btn-danger remove-question d-none">Remove</button>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Question Type</label>
-                                        <select class="form-select question-type" name="questions[0][type]">
-                                            <option value="text">Text</option>
-                                            <option value="image">Image</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3 question-text">
-                                        <label class="form-label">Question Text</label>
-                                        <input type="text" class="form-control" name="questions[0][text]" placeholder="Enter your question">
-                                    </div>
-
-                                    <div class="mb-3 question-image d-none">
-                                        <label class="form-label">Upload Image</label>
-                                        <input type="file" class="form-control" name="questions[0][image]">
-                                    </div>
-
-                                    <!-- Options -->
-                                    <div class="options-container">
-                                        <label class="form-label">Options</label>
-                                        <div class="option-item input-group mb-2">
-                                            <input type="text" class="form-control" name="questions[0][options][]" placeholder="Enter option">
-                                            <button type="button" class="btn btn-outline-danger remove-option">X</button>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn btn-link add-option">+ Add Option</button>
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-outline-primary mt-2" id="add-question">+ Add Question</button>
-                        </form>
-                    </div>
-
-                    <!-- Poll Info Tab -->
-                    <div class="tab-pane fade" id="info-tab-pane" role="tabpanel">
-                        <div id="poll_list"></div>
-                    </div>
-                    
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="poll-form">Save Poll</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{{--  Create Poll for a particular vendor --}}
-
-<div class="modal fade" id="poll_modal" tabindex="-1" aria-labelledby="pollModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-scrollable">
-        <div class="modal-content">
-            
+          
             <div class="modal-body">
 
                 <!-- Nav Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item active" role="presentation">
-                        <button class="nav-link active" id="poll-tab" data-bs-toggle="tab" data-bs-target="#poll-tab-pane" type="button" role="tab">Create Poll</button>
+                     <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="participation-table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button" role="tab">All Participants</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="info-poll-tab" data-bs-toggle="tab" data-bs-target="#info-poll-tab-pane" type="button" role="tab">Poll Info</button>
+                        <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab">Active Participants</button>
                     </li>
+                   
                 </ul>
 
                 <!-- Tab Content -->
                 <div class="tab-content mt-3">
 
-                    
-                    <!-- Create Poll Tab -->
-                    <div class="tab-pane fade show active" id="poll-tab-pane" role="tabpanel">
-                        <form id="poll-form">
-                            @csrf
-                            <input type="hidden" name="meeting_id" id="poll_meeting_id" >
-                            <div class="mb-3">
-                                <label for="poll-question" class="form-label">Poll Question</label>
-                                <input type="text" class="form-control" id="poll-question" name="question" placeholder="Enter your poll question" required>
-                            </div>
 
-                            <div id="poll-options" class="mb-3">
-                                <label class="form-label">Poll Options</label>
-                                
-                                <!-- Additional options will be added here -->
-                                <div id="additional-options"></div>
-
-                                <button type="button" id="add-option" class="btn btn-link">+ Add Option</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Poll Info Tab -->
-                    <div class="tab-pane fade" id="info-poll-tab-pane" role="tabpanel">
-                        <div id="poll_list">
-                            
+                    <!-- Table Tab -->
+                    <div class="tab-pane fade show active" id="table-tab-pane" role="tabpanel">
+                        <div class="table-scroll">
+                            <table class="table table-bordered table-hover" id="participants_list">
+                            </table>
                         </div>
                     </div>
+
+                    <!-- Info Tab -->
+                    <div class="tab-pane fade show " id="info-tab-pane" role="tabpanel">
+                        <p>This is some informational content in the first tab.</p>
+                    </div>
+
                     
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="poll-form">Save Poll</button>
+            <div class="modal-footer d-flex justify-content-between">
+               
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Send Email to ALL</button>
+
+                <div>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
             </div>
         </div>
     </div>

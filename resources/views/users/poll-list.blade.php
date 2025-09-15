@@ -1,13 +1,17 @@
 @foreach($polls as $poll)
     <h5 class="m-0 font-weight-bold text-theme"> {{ $poll->title }}</h5>
 
-    <form>
+    <form id="user_poll">
         @csrf
         <input type="hidden" name="participant_id" value="{{ session('webuser')->id }}">
         <input type="hidden" name="poll_id" value="{{ $poll->id }}">
 
         @foreach($poll->questions as $question)
-            <h4 class="mt-3">{{ $question->question_text }}</h4>
+            @if($question->question_type=="text")
+                <h4 class="mt-3">{{ $question->question_text }}</h4>
+            @else 
+                <img src="{{ asset('public/storage/' . $question->question_image) }}" style="height:100px" alt="Question Image" class="img-fluid">
+            @endif
             <input type="hidden" name="questions[{{ $question->id }}][question_id]" value="{{ $question->id }}">
 
             @foreach($question->options as $option)
