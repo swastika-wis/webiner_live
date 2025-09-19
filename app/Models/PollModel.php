@@ -24,4 +24,9 @@ class PollModel extends Model
         return $this->hasMany(PollQuestionModel::class, 'poll_id');
     }
 
+    public function meeting()
+    {
+        return $this->hasOne(MeetingModel::class,"meeting_number","meeting_number");
+    }
+
 }

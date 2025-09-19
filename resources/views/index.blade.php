@@ -41,9 +41,7 @@
         <div>
           <a href="{{ route('vendor-login', \Crypt::encrypt(0)) }}" class="text-theme fw-semibold text-decoration-none link-hover">Vendor Login</a>
         </div>
-        <div>
-          <a href="{{ route('user-login') }}" class="text-theme fw-semibold text-decoration-none link-hover">Participant Login Here</a>
-        </div>
+        
       </div>
     </div>
   </div>

@@ -28,7 +28,7 @@
                         @foreach($vendors as $vendor)
                              <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td><img src="{{ asset('/public/storage/' . $vendor->logo) }}" alt="Vendor Logo" height="100"></td>
+                                <td><img src="{{ asset('/storage/app/public/'.$vendor->logo) }}" alt="Vendor Logo" height="100"></td>
                                 <td>{{$vendor->name}}</td>
                                <td>
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -77,13 +77,13 @@
                         <div class="form-group">
                             <label for="vendorName">User Name</label>
                             <input type="email" name="user_name" class="form-control"
-                                placeholder="Enter vendor name" required>
+                                placeholder="Enter user name" required>
                         </div>
 
                         <div class="form-group">
                             <label for="vendorName">Password</label>
                             <input type="password" name="password" class="form-control"
-                                placeholder="Enter vendor name" required>
+                                placeholder="Enter password" required>
                         </div>
 
                         <div class="row">
@@ -104,9 +104,22 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="vendorLogo">Logo</label>
-                            <input type="file" name="logo" class="form-control-file" id="vendorLogo" accept="image/*">
+                            <label for="vendorLogo">Banner </label>
+                            <input type="file" name="logo" class="form-control-file" accept="image/*">
                         </div>
+
+
+                        <div class="form-group">
+                            <label for="vendorLogo">Logo Left </label>
+                            <input type="file" name="logo1" class="form-control-file" accept="image/*">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="vendorLogo">Logo Right </label>
+                            <input type="file" name="logo2" class="form-control-file" accept="image/*">
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

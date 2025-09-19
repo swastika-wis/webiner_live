@@ -9,14 +9,20 @@
 @endsection
 
 @section('content')
-<div class="container mt-4">
-    <h3 class="mb-4">All Question and Answers</h3>
+<div class="px-0 px-lg-5 my-4">
+    <div class="card">
+        <div class="card-header py-3">
+        <h5 class="m-0 font-weight-bold text-theme">All Question and Answers</h5>
+    </div>
+    
+    <div class="card-body">
+    <!-- <h3 class="mb-4">All Question and Answers</h3> -->
 
     <table class="table " id="qnaTable">
         <thead>
             <tr>
+                <th style="min-width:200px">Ask By</th>
                 <th>Question</th>
-                <th>Ask By</th>
                 <th>Answer</th>
                 <th>Action</th>
             </tr>
@@ -24,13 +30,19 @@
         <tbody>
             @foreach($qna_list as $qna)
                 <tr>
-                    <td>{{$qna->question}}</td>
-                    <td>{{$qna->askBy->full_name}}</td>
+                     <td>{{$qna->askBy->full_name}}</td>
                     <td>
-                        <textarea vlass="form-control" id="box_{{$qna->id}}" rows="2">{{$qna->answer}}</textarea>
+                        <div class="show-qs">
+                        {{$qna->question}}
+                        </div>
+                    </td>
+                   
+                    <td>
+                        <textarea vlass="form-control" id="box_{{$qna->id}}" rows="5" cols="50">{{$qna->answer}}</textarea>
                     </td>
                     <td>
-                        <button class="btn btn-info" onclick="saveResponse('{{$qna->id}}')">Send</button>
+                        <button class="btn btn-primary" onclick="saveResponse('{{$qna->id}}')">Send</button>
+                        <span class="text-info" id="message_{{$qna->id}}"></span>
                     </td>
                 </tr>
             @endforeach
@@ -64,10 +76,19 @@
         data: {'_token':csrf_token,'record_id':record_id,'answer':answer},
 
         success: function(response) {
+            $("#message_"+record_id).html("Message Sent");
 
+             setTimeout(function() {
+                    $("#message_"+record_id).fadeOut();
+            }, 2000);
         }
 
        });
     }
+
+
+    setTimeout(function() {
+        location.reload();
+    }, 20000); 
 </script>
 @endsection

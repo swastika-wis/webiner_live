@@ -24,7 +24,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Duration</th>
+                        <th>Schedule</th>
+                        
                         <th>Meeting Topic</th>
                         <th>Action</th>
                     </tr>
@@ -32,22 +33,35 @@
                 <tbody>
                     @foreach($meetings as $meeting)
                     @php 
-                        $raw = $meeting->meeting_details;
-                        $jsonPart = substr($raw, strpos($raw, '{'));
-                        $data = json_decode($jsonPart, true);
-                        $password = explode('pwd=', $data['join_url']);
+
+                        $meeting_id = $meeting->meeting_number;
+                        $password = $meeting['meeting_password'];
+
+                        $meeting_time = \Carbon\Carbon::parse($meeting->created_at)->format('d-m-Y h:i:s');
+                        $current_time = \Carbon\Carbon::now()->timezone('Asia/Kolkata')->format('d-m-Y h:i:s');
+                        $five_minute_before = \Carbon\Carbon::parse($meeting->created_at)->subMinutes(20);
+                        $three_hours_after =  \Carbon\Carbon::parse($meeting->created_at)->addHours(3); 
+
                     @endphp 
                     <tr>
                         <td data-label="ID">{{$loop->iteration}}</td>
-                        <td data-label="Duration">30 min</td>
-                        <td data-label="Meeting Topic">{{$data['topic']}}</td>
+                        <td data-label="Duration">                         
+                            {{$meeting_time}}                       
+                        </td>
+                       
+                        <td data-label="Meeting Topic">{{$meeting->topic}}</td>
                         {{-- <td data-label="Action">
                             <a href="javascript:void(0)" onclick="startMeeting('{{$data['id']}}','{{$password[1]}}')" class="btn btn-sm btn-primary text-white">Join</a>
                         </td> --}}
 
-                        <td>
-                            <a href="{{route('join-meeting',$data['id'])}}" class="btn btn-sm btn-primary text-white ">Join Here </a>
-                        </td>
+                            <td>
+                            <a href="{{route('join-meeting',$meeting_id)}}" class="btn btn-sm btn-primary text-white ">Join Here </a>
+                            
+                                <!-- @if(($current_time<=$five_minute_before) && ($current_time>=$three_hours_after))
+                                    <a href="{{route('join-meeting',$meeting_id)}}" class="btn btn-sm btn-primary text-white ">Join Here </a>
+                                @endif -->
+                            </td>
+
                     </tr>
                     @endforeach
                 </tbody>

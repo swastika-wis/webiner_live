@@ -39,20 +39,32 @@
         </a>
     </li>
 
-     <li class="nav-item @if(Request::is('meetings/*')) active @endif">
+     <li class="nav-item @if(Request::is('meetings/*','qna-list/*','meeting-poll-list/*')) active @endif">
             <a class="nav-link" href="{{route('meeting','scheduled')}}">
                 <i class="fas fa-fw fa-table"></i>
                 <span>List Of Meetings</span>
             </a>
     </li>
-@endif
+
+    <!-- <li class="nav-item @if(Request::is('vendor-poll-list','create-poll/*')) active @endif">
+        <a class="nav-link" href="{{route('vendor-poll-list')}}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>All Polls </span>
+        </a>
+    </li>
+
+    <li class="nav-item @if(Request::is('vendor-qna-list')) active @endif">
+        <a class="nav-link" href="{{route('vendor-qna-list')}}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Question and Answers </span>
+        </a>
+    </li> -->
+    
+
+    @endif
 
   
-
-   
-
-
-    @if( Auth::guard('vendoruser'))
+    @if( session('vendoruser'))
     <li class="nav-item @if(Request::is('vendor-dashboard')) active @endif">
         <a class="nav-link" href="{{route('vendor-dashboard')}}">
             <i class="fas fa-fw fa-table"></i>
@@ -60,15 +72,7 @@
         </a>
     </li>
 
-     
-    
-     {{-- <li class="nav-item @if(Request::is('vendor-polls')) active @endif">
-        <a class="nav-link" href="{{route('vendor-create-poll',$data['id'])}}" >
-             <i class="fas fa-fw fa-table"></i>
-            <span>Create Poll<span></a>
-    </li> --}}
-
-    <li class="nav-item @if(Request::is('vendor-poll-list')) active @endif">
+    <li class="nav-item @if(Request::is('vendor-poll-list','create-poll/*')) active @endif">
         <a class="nav-link" href="{{route('vendor-poll-list')}}">
             <i class="fas fa-fw fa-table"></i>
             <span>All Polls </span>
@@ -84,52 +88,4 @@
 
     @endif
 
-
-    {{-- <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-table"></i>
-            <span>My Leads</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/rpfoHicZRs/vendors">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Vendors</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/rpfoHicZRs/presenter">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Presenter</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/rpfoHicZRs/seminar">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Seminar</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/rpfoHicZRs/liveusers">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Live Users</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/rpfoHicZRs/questions">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Live Questions</span>
-        </a>
-    </li> --}}
-
-    {{-- <hr class="sidebar-divider d-none d-md-block"> --}}
-
-    {{-- <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-    </div> --}}
 </ul>

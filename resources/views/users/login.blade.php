@@ -35,11 +35,12 @@
           <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
-              <div class="col-lg-6 bg-login-image d-flex align-items-center justify-content-center">
-                <img src="{{asset('/assets/img/login.png')}}" alt="login image" height="300px">
+              <div class="col-lg-6 bg-login-image bg-white d-flex align-items-center justify-content-center">
+                {{-- <img src="{{asset('/assets/img/login.png')}}" alt="login image" height="300px"> --}}
+                <img src="{{ asset('/storage/app/public/'.$meeting->vendorRecord->logo) }}" alt="login image">
               </div>
               <div class="col-lg-6">
-                <div class="p-5">
+                <div class="p-5 d-flex justify-content-center h-100 flex-column">
                   <div class="text-center">
                     <!-- <h1 class="h4 text-gray-900 mb-4">Login User!</h1> -->
 
@@ -49,6 +50,7 @@
                   </div>
                   <form class="user needs-validation" novalidate action="{{route('user-validate')}}" method="POST" >
                     @csrf
+                    <input type="hidden" value="{{$meeting_number}}" name="meeting_number">
                     <div class="form-group">
                       <input type="text" class="form-control" aria-describedby="email" required placeholder="Enter Phone Number" name="phone">
                     </div>
@@ -58,10 +60,6 @@
                     </div> 
 
                     <button class="btn btn-primary py-2 py-lg-3 btn-block" name="signupSubmit"  value="signupSubmit">Login</button>
-
-                   
-                   
-                   
                   </form>
                   <hr>
                   <div class="text-center">

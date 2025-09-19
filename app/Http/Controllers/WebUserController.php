@@ -57,15 +57,16 @@ class WebUserController extends Controller
         return redirect()->route('home');
     }
 
-    public function user_login()
+    public function user_login($meeting_number)
     {
-        return view('users.login');
+        $meeting=MeetingModel::where('meeting_number',$meeting_number)->first();
+        return view('users.login',compact('meeting_number','meeting'));
     }
 
     public function user_validate(Request $request)
     {
 
-        $user = Auth::guard('webuser')->attempt(['phone' => $request->phone, 'password' => $request->password]);
+        $user = Auth::guard('webuser')->attempt(['phone' => $request->phone, 'password' => $request->password,'meeting_id'=>$request->meeting_number]);
 
         $record = Auth::guard('webuser')->user();
 
@@ -73,7 +74,8 @@ class WebUserController extends Controller
 
             $request->session()->put('webuser', Auth::guard('webuser')->user());
             
-            if ($record->login_status == null) {
+            
+            if ($record->login_status == 1) {
                 
                 return redirect()->route('user-upadtepassword');
 
@@ -84,7 +86,7 @@ class WebUserController extends Controller
         }
 
         $request->session()->flash('fail', 'Unable to login!');
-        return redirect()->route('user-login');
+        return redirect()->route('index');
     }
 
     public function dashboard()
@@ -99,6 +101,10 @@ class WebUserController extends Controller
 
     public function join_meeting($meeting_id)
     {
+        $user_record = session('webuser');
+        $user_record->active=1;
+        $user_record->save();
+        
         $meeting = MeetingModel::where('meeting_number', $meeting_id)->first();
         $meeting_polls = PollModel::where('meeting_number', $meeting_id)->get();
         return view('users.join_meeting', compact('meeting', 'meeting_polls'));
@@ -114,7 +120,7 @@ class WebUserController extends Controller
     public function update_participant_password($id)
     {
         $password = bcrypt("123456");
-        Participent::where(['id' => $id])->update(["password" => $password, 'login_status' => null]);
+        Participent::where(['id' => $id])->update(["password" => $password, 'login_status' => 1]);
         return redirect()->back();
     }
     public function upadtepassword()
@@ -127,7 +133,7 @@ class WebUserController extends Controller
         $id = $request->id;
         $password = $request->password;
 
-        WebUser::where('id',$id)->update(['password'=>bcrypt($password),'login_status'=>1]);
+        WebUser::where('id',$id)->update(['password'=>bcrypt($password),'login_status'=>0]);
         
         return redirect()->route('user-dashboard');
     }
@@ -151,34 +157,39 @@ class WebUserController extends Controller
 
 
 
-    public function poll_list(Request $request)
+    public function poll_list(Request $request,$meeting_number)
     {
+        
         // $polls = PollModel::get();
         // return view('users.poll-list', compact('polls'))->render();
 
         $participant_id = $request->session()->get('webuser')->id; 
         
-    // Get IDs of questions answered by the user
-    $answeredQuestionIds = UserPollModel::where('paticipant_id', $participant_id)
-        ->pluck('question_id')
-        ->toArray();
+        // Get IDs of questions answered by the user
+        $answeredQuestionIds = UserPollModel::where('paticipant_id', $participant_id)
+            ->pluck('question_id')
+            ->toArray();
 
-    // Get polls where at least one question has NOT been answered by the user
-    $polls = PollModel::whereHas('questions', function ($query) use ($answeredQuestionIds) {
-            if (!empty($answeredQuestionIds)) {
-                $query->whereNotIn('id', $answeredQuestionIds);
-            }
-        })
+        // Get polls where at least one question has NOT been answered by the user
+        $polls = PollModel::where('meeting_number',$meeting_number)
+                ->whereHas('questions', function ($query) use ($answeredQuestionIds) {
+                if (!empty($answeredQuestionIds)) {
+                    $query->whereNotIn('id', $answeredQuestionIds);
+                }
+            })
         ->with('questions.options') // Optional: preload questions/options
         ->get();
 
-    return view('users.poll-list', compact('polls'))->render();
+        return view('users.poll-list', compact('polls'))->render();
 
     }
 
-    public function qna_list($ask_by)
+    public function qna_list($ask_by,$meeting_number)
     {
-        $qna_list  =QNAModel::where('ask_by',$ask_by)->get();
+        $qna_list =QNAModel::where('ask_by',$ask_by)
+                    ->where('meeting_id',$meeting_number)
+                    ->orderBy('id','desc')
+                    ->get();
         return view('users.qna-list', compact('qna_list'))->render();
         
     }

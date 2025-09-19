@@ -19,7 +19,7 @@ Route::get('/participent-logout',[LoginController::class,"participent_logout"])-
 
 
 // Participent
-Route::get('/user-login',[WebUserController::class,"user_login"])->name('user-login');
+Route::get('/user-login/{meeting_number}',[WebUserController::class,"user_login"])->name('user-login');
 Route::post('/user-validate',[WebUserController::class,"user_validate"])->name('user-validate');
 Route::get('/register-user/{meeting_id}',[MeetingController::class,"register_user"])->name('register-user');
 Route::post('store-participent',[MeetingController::class,"store_participent"])->name('store-participent');
@@ -32,9 +32,22 @@ Route::post('/vendor-validate',[WebvendorController::class,"vendor_validate"])->
 
 /////// show participant list
 Route::post('/get-participant',[MeetingController::class,"participant_list"])->name('partcipant-list');
+Route::post('/send-bulk-email',[MeetingController::class,"send_bulk_email"])->name('send-bulk-email');
 
 
-Route::get('parti',[MeetingController::class,"getLiveParticipants"])->name('partcipant-live');
+Route::middleware(['commonAuthGroup'])->group(function () {
+
+    Route::get('parti',[MeetingController::class,"getLiveParticipants"])->name('partcipant-live');
+
+    Route::get('/create-poll/{meeting_id}',[WebvendorController::class,"vendor_create_poll"])->name('vendor-create-poll');
+    Route::post('/vendor-poll-submission',[WebvendorController::class,"vendor_poll_submission"])->name('vendor-poll-submission');
+    Route::get('/vendor-poll-list',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
+    Route::get('/vendor-qna-list',[WebvendorController::class,"vendor_qna_list"])->name('vendor-qna-list');
+
+    Route::get('/vendor-qna-list',[WebvendorController::class,"vendor_qna_list"])->name('vendor-qna-list');
+    Route::post('/vendor-qna-submission',[QNAController::class,"vendor_qna_submission"])->name('vendor-qna-submission');
+
+});
 
 Route::middleware(['webuserGroup'])->group(function () {
     
@@ -44,7 +57,6 @@ Route::middleware(['webuserGroup'])->group(function () {
     Route::get('/vendors',[VendorController::class,"vendor"])->name('vendor');
     Route::post('/vendors-store',[VendorController::class,"vendorStore"])->name('vendor.store');
 
-    
     /////// zoom meetings
     Route::get('/meetings/{type}',[MeetingController::class,"index"])->name('meeting');
     Route::get('/create-meeting', [MeetingController::class, 'create'])->name('create-meeting');
@@ -52,6 +64,11 @@ Route::middleware(['webuserGroup'])->group(function () {
 
     Route::get('update-participant-status/{status}/{id}',[WebUserController::class,"update_participant_status"])->name('update-participant-status');
     Route::get('update-participant-password/{id}',[WebUserController::class,"update_participant_password"])->name('update-participant-password');
+    
+
+    Route::get('/meeting-poll-list/{meeting_number}',[WebvendorController::class,"poll_list"])->name('meeting-poll-list'); 
+    Route::get('/qna-list/{meeting_id}',[WebvendorController::class,"qna_list"])->name('qna-list');
+
 
 });
 
@@ -60,26 +77,16 @@ Route::middleware(['participateGroup'])->group(function () {
     Route::get('/user-dashboard',[WebUserController::class,"dashboard"])->name('user-dashboard');
     Route::get('join-meeting/{meeting_id}',[WebUserController::class,"join_meeting"])->name('join-meeting');
     Route::post('/user-poll-submission',[WebUserController::class,"user_poll_submission"])->name('user-poll-submission');
-    Route::get('/poll-list',[WebUserController::class,"poll_list"])->name('poll.list');
+    Route::get('/poll-list/{meeting_number}',[WebUserController::class,"poll_list"])->name('poll.list');
     Route::get('user-upadtepassword',[WebUserController::class,"upadtepassword"])->name('user-upadtepassword');
     Route::post('/user-change-password',[WebUserController::class,"change_password"])->name('user-change-password');
-
     Route::post('/user-qna-submission',[QNAController::class,"user_qna_submission"])->name('user-qna-submission');
-
-    Route::get('/qna-list/{ask_by}',[WebUserController::class,"qna_list"])->name('qna.list');
-
-    
+    Route::get('/qna-list/{ask_by}/{meeting_number}',[WebUserController::class,"qna_list"])->name('qna.list');
 });
 
 
 
 Route::middleware(['vendorGroup'])->group(function () {
-    Route::get('/vendor-dashboard',[WebvendorController::class,"dashboard"])->name('vendor-dashboard');
-    Route::get('/create-poll/{meeting_id}',[WebvendorController::class,"vendor_create_poll"])->name('vendor-create-poll');
-    Route::post('/vendor-poll-submission',[WebvendorController::class,"vendor_poll_submission"])->name('vendor-poll-submission');
-    Route::get('/vendor-poll-list',[WebvendorController::class,"vendor_poll_list"])->name('vendor-poll-list');
-    Route::get('/vendor-qna-list',[WebvendorController::class,"vendor_qna_list"])->name('vendor-qna-list');
-
-    Route::post('/vendor-qna-submission',[QNAController::class,"vendor_qna_submission"])->name('vendor-qna-submission');
-
+    Route::get('/vendor-dashboard',[WebvendorController::class,"dashboard"])->name('vendor-dashboard');  
+    Route::get('/vendor-join-meeting/{meeting_id}/{password}',[WebvendorController::class,"vendor_join_meeting"])->name('vendor-join-meeting');
 });

@@ -9,7 +9,9 @@
     <!-- Left panel -->
     <div class="col-md-6 left-panel p-4 pt-5 p-md-5 d-flex flex-column justify-content-center align-items-center">
       <a href="{{route('index')}}">
-        <img src="{{ asset('/assets/img/wis-logo.png') }}" alt="Webinar Illustration" class="mb-3 mb-lg-4">
+        {{-- <img src="{{ asset('/assets/img/wis-logo.png') }}" alt="Webinar Illustration" class="mb-3 mb-lg-4"> --}}
+        <img src="{{ asset('/storage/app/public/vendors/X8s24eHGG0It4MC49VbNDRfErczO58jR9LpTBu43.jpg') }}" alt="Webinar Illustration" class="mb-3 mb-lg-4">
+
       </a>
       <h3 class="text-theme">Join Engaging Webinars</h3>
       <p class="text-muted mb-0">Learn, connect, and grow through interactive online sessions.</p>

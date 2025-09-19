@@ -155,8 +155,14 @@ class WebvendorController extends Controller
 
         // ],200);
 
-        $polls = PollModel::get();
-        return view('vendor.vendor_poll_list',compact('polls'));
+        $meeting_number = session('vendoruser')->meeting->meeting_number??'';
+        if($meeting_number=="")
+            {
+                $polls = PollModel::orderBy('id','desc')->get();
+        return view('vendor.vendor_poll_list',compact('polls','meeting_number'));        
+            }
+        $polls = PollModel::where('meeting_number',$meeting_number)->orderBy('id','desc')->get();
+        return view('vendor.vendor_poll_list',compact('polls','meeting_number'));
 
     }
 
@@ -168,12 +174,45 @@ class WebvendorController extends Controller
 
     public function vendor_qna_list(Request $request)
     {
+        if(session('vendoruser')){
         $vendor_id = $request->session()->get('vendoruser')->id;
         
         $meeting=MeetingModel::where('vendor_id',$vendor_id)->first();
         $meeting_number  = $meeting->meeting_number;
 
+        
         $qna_list = QNAModel::where('meeting_id',$meeting_number)->get();
         return view('vendor.vendor_qna_list',compact('qna_list'));
+        }
+        else 
+        {
+            
+        
+        $qna_list = QNAModel::get();
+        return view('vendor.vendor_qna_list',compact('qna_list'));
+        }
     }
+
+    public function vendor_join_meeting(Request $request,$meeting_id,$password)
+    {
+        return view('vendor.vendor-join_window',compact('meeting_id','password'));
+    }
+
+
+    public function poll_list(Request $request,$meeting_number)
+    {
+        
+    
+        $polls = PollModel::where('meeting_number',$meeting_number)->orderBy('id','desc')->get();
+        return view('vendor.vendor_poll_list',compact('polls','meeting_number'));
+
+    }
+
+
+    public function qna_list(Request $request,$meeting_id)
+    {
+        $qna_list = QNAModel::where('meeting_id',$meeting_id)->get();
+        return view('vendor.vendor_qna_list',compact('qna_list'));       
+    }
+
 }

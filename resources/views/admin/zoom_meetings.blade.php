@@ -33,8 +33,8 @@
         <div class="mb-3">
             <a href="{{route('meeting','scheduled')}}" class="btn btn-outline-success @if(Request::is('meetings/scheduled')) btn-success text-white @endif">
                 ALl Meetings </a>
-            <a href="{{route('meeting','upcoming')}}" class="btn btn-outline-success @if(Request::is('meetings/upcoming')) btn-success text-white @endif">Upcoming</a>
-            <a href="{{route('meeting','live')}}" class="btn btn-outline-success @if(Request::is('meetings/live')) btn-success text-white @endif">Live</a>
+            {{-- <a href="{{route('meeting','upcoming')}}" class="btn btn-outline-success @if(Request::is('meetings/upcoming')) btn-success text-white @endif">Upcoming</a>
+            <a href="{{route('meeting','live')}}" class="btn btn-outline-success @if(Request::is('meetings/live')) btn-success text-white @endif">Live</a> --}}
         </div>
         <div class="table-responsive">
             <table class="table table-secondary table-hover " id="dataTable2" width="100%" cellspacing="0">
@@ -48,8 +48,9 @@
                 </thead>
                 <tbody>
                     @forelse($meetings as $meeting)
-                    @if(in_array($meeting['id'],$db_meetings))
+                    
                     @php
+                    
                         // Map timezones to friendly labels
                         $timezoneLabels = [
                             'Asia/Kolkata' => 'Mumbai, Kolkata, New Delhi',
@@ -58,8 +59,9 @@
                             'Asia/Tokyo' => 'Tokyo, Osaka',
                         ];
                     
-                        $timezone = $meeting['timezone'] ?? 'Asia/Kolkata';
-                        $start = \Carbon\Carbon::parse($meeting['start_time'])->setTimezone($timezone);
+                        $timezone = 'Asia/Kolkata';
+                        $start = \Carbon\Carbon::parse($meeting['created_at'])->setTimezone($timezone);
+                        
                         $end = (clone $start)->addMinutes($meeting['duration']);
                     
                         // Pick friendly label if exists, otherwise fallback
@@ -80,14 +82,14 @@
                             </td>
                             <td>
                                 <div>
-                                    {{$meeting['topic']}}
+                                    {{$meeting->topic}}
                                 </div>
                                 <div>
-                                    Meeting ID: {{$meeting['id']}}
+                                    Meeting ID: {{$meeting->meeting_number}}
                                 </div>
                             </td>
                             <td>
-                                <a href="javascript:void(0)" onclick="showParticipantList('{{$meeting['id']}}')" class="btn btn-primary text-white btn-sm">Show Participant List</a>                                
+                                <a href="javascript:void(0)" onclick="showParticipantList('{{$meeting->meeting_number}}')" class="btn btn-primary text-white btn-sm">Show Participant List</a>                                
                             </td>
                         
 
@@ -97,17 +99,33 @@
                                     
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         
-                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting['id']))}}')">Share User Registration Link</a>
+                                        {{-- <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLink('{{route('register-user',\Crypt::encrypt($meeting->meeting_number))}}')">Share User Registration Link</a> --}}
+
+                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLink('{{route('register-user',$meeting->meeting_number)}}')">Share User Registration Link</a>
+
+                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLink('{{route('user-login',$meeting->meeting_number)}}')">Participants Login Link</a>
+
+
+                                        <a href="{{route('vendor-create-poll',$meeting->meeting_number)}}" target="_blank" class="dropdown-item"  >Create Poll</a>
+
+
+                                        <a href="{{route('meeting-poll-list',$meeting->meeting_number)}}" class="dropdown-item"  >All Polls</a>
 
 
 
-                                        <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLinkLogin('{{route('vendor-login',\Crypt::encrypt($vendor_meetings[$meeting['id']]))}}')">Share Vendor Link</a>
+                                        <a href="{{route('qna-list',$meeting->meeting_number)}}" class="dropdown-item"  >All QnA</a>
+
+
+
+
+
+                                        {{-- <a href="javascript:void(0);" class="dropdown-item"  onclick="copyLinkLogin('{{route('vendor-login',\Crypt::encrypt($vendor_meetings[$meeting['id']]))}}')">Share Vendor Link</a> --}}
 
                                     </div>
                                 </div>
                             </td>
                         </tr>
-                    @endif
+                
                     @empty
                         No Meetings Listed
                     @endforelse 
@@ -152,7 +170,12 @@
 
                     <!-- Info Tab -->
                     <div class="tab-pane fade show " id="info-tab-pane" role="tabpanel">
-                        <p>This is some informational content in the first tab.</p>
+                        
+                        
+                        <div class="table-scroll">
+                            <table class="table table-bordered table-hover" id="active_participants_list">
+                            </table>
+                        </div>
                     </div>
 
                     
@@ -161,7 +184,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">
                
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Send Email to ALL</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" onclick="showEmailModal()" >Send Email to ALL</button>
 
                 <div>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -171,6 +194,36 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Email Body Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="emailModalLabel">Enter Email Content</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+        <div class="mb-3">
+              <label for="emailSubject" class="form-label">Subject</label>
+              <input type="text" class="form-control" id="emailSubject" placeholder="Subject of the email" required>
+            </div>
+          
+            <div class="mb-3">
+              <label for="emailBody" class="form-label">Email Body</label>
+              <textarea class="form-control" id="emailBody" rows="6" placeholder="Write your email here..." required></textarea>
+            </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="submit" form="emailForm" class="btn btn-primary" onclick="sendMailButton()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 @endsection
@@ -269,6 +322,7 @@
         success: function(response) {
             $("#participant_modal").modal('show');
             $("#participants_list").html(response.data.participants);
+            $("#active_participants_list").html(response.data.active_participants);
 
             // Ensure the DataTable is initialized after content is inserted
             setTimeout(function () {
@@ -282,6 +336,46 @@
 }
 
 
+function showEmailModal()
+{
+    $("#emailBody").val("");
+    $("#emailSubject").val();
+    $("#emailModal").modal('show');
+}
+function sendMailButton()
+    {
+        const emailBody = $("#emailBody").val();
+        const emailSubject = $("#emailSubject").val();
+        
+        var selectedIds = [];
+        $('input[name="participants"]:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+
+        if (selectedIds.length > 0) {
+            
+            $.ajax({
+                url: '{{route("send-bulk-email")}}', 
+                type: 'POST',
+                data: {
+                    ids: selectedIds, 
+                    _token: '{{ csrf_token() }}',
+                    emailBody:emailBody,
+                    emailSubject:emailSubject
+                },
+                success: function(response) {
+                    alert('Bulk email sent successfully!');
+                },
+                error: function(error) {
+                    alert('Failed to send bulk email.');
+                }
+            });
+        } else {
+            alert('Please select at least one participant.');
+        }
+
+    }
 
 
 </script>

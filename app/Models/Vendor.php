@@ -17,4 +17,10 @@ class Vendor extends Authenticatable
     use SoftDeletes;
     
     protected $guarded=[];
+
+
+    public function meeting()
+    {
+        return $this->hasOne(MeetingModel::class,"vendor_id","id");
+    }
 }

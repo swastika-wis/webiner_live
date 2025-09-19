@@ -105,5 +105,8 @@
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
   }
+  .login-container {
+    margin: 30px 0;
+  }
 }
   </style>

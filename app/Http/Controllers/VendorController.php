@@ -25,8 +25,19 @@ class VendorController extends Controller
 
         // Handle logo upload
         $logoPath = null;
+        $logoPath1 = null;
+        $logoPath2 = null;
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('vendors', 'public');
+        }
+
+
+        if ($request->hasFile('logo1')) {
+            $logoPath1 = $request->file('logo1')->store('vendors', 'public');
+        }
+
+        if ($request->hasFile('logo2')) {
+            $logoPath2 = $request->file('logo2')->store('vendors', 'public');
         }
 
         Vendor::create([
@@ -36,6 +47,9 @@ class VendorController extends Controller
             'theme_background' => $validated['theme_background'] ?? null,
             'theme_foreground' => $validated['theme_foreground'] ?? null,
             'logo'             => $logoPath,
+            'logo2'            => $logoPath1,
+            'logo3'            => $logoPath2,
+
         ]);
 
         return redirect()->back()->with('success', 'Vendor created successfully!');

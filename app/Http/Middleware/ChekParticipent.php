@@ -19,7 +19,7 @@ class ChekParticipent
         if (!session('webuser')) {
         
             $request->session()->flash('fail','Please login first!');
-            return redirect()->route('user-login');
+            return redirect()->route('index');
         }        
 
         return $next($request);

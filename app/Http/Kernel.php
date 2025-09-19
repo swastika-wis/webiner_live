@@ -54,6 +54,9 @@ class Kernel extends HttpKernel
         ],
         'vendorGroup'=>[
             \App\Http\Middleware\ChekVendor::class,
+        ],
+        'commonAuthGroup'=>[
+            \App\Http\Middleware\CheckCommonUser::class,
         ]
     ];
 

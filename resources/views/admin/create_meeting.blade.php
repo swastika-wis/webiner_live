@@ -8,6 +8,7 @@
         <h5 class="m-0 font-weight-bold text-theme">Create a New Meeting</h5>
     </div>
     <div class="card-body">
+        
         {{-- <h5 class="text-2xl font-semibold mb-4 text-gray-800">Create a New Meeting</h5> --}}
         <form action="{{route('store-meeting')}}" method="POST" class="space-y-4">
             @csrf
@@ -51,7 +52,16 @@
                     <option value="Asia/Tokyo">Asia/Tokyo</option>
                 </select>
             </div>
+        
+
+        <div class="form-group col-12 col-md-6 col-lg-4">
+            <label for="topic" class="block text-sm font-medium text-gray-700 mb-1">Meeting URL</label>
+            <input type="text" name="meeting_url" id="topic"
+                   class="form-control">
         </div>
+
+    </div>
+
             <button type="submit"
                     class="btn btn-primary py-2 py-lg-3 px-4 px-lg-5">
                     <i class="fas fa-plus mr-2"></i>

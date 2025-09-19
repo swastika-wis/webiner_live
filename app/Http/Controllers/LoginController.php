@@ -39,7 +39,7 @@ class LoginController extends Controller
     {
         Auth::guard('vendoruser')->logout();
         $request->session()->pull('vendoruser');
-        $request->session()->flash('success','Vendor Logout successful!');
+        $request->session()->flash('success','Logout successful!');
         return redirect()->route('index');
     }
 
@@ -47,7 +47,7 @@ class LoginController extends Controller
     {
         Auth::guard('webuser')->logout();
         $request->session()->pull('webuser');    
-        $request->session()->flash('success','Participent Logout successful!');    
+        $request->session()->flash('success','Logout successful!');    
         return redirect()->route('index');
     }
 }

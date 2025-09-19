@@ -89,12 +89,15 @@
     --bs-btn-disabled-bg: #033c71;
     --bs-btn-disabled-border-color: #033c71;
 }
+.top-logo-img img{
+  max-width:100%
+}
 @media (max-width: 768px) {
   .left-panel img {
     max-width: 60%;
   }
   .form-control {
-      min-height: 44px;
+      min-height: 50px;
   }
   .left-panel{
     border-top-right-radius: 20px;
@@ -105,31 +108,34 @@
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
   }
+  .login-container {
+    margin: 30px 0;
+  }
 }
 
   </style>
 </head>
 <body>
   <div class="container login-container min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="row bg-white shadow-md rounded-5 p-5">
+    <div class="row bg-white shadow-md rounded-5 px-2 py-4 p-lg-5">
       <div class="col-12 mb-3 mb-lg-4">
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 align-items-center">
-          <div>
-            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo2) }}" alt="" width="100px" height="100px">
+          <div class="top-logo-img">
+            <img src="{{ asset('/storage/app/public/'.$record->vendorRecord->logo2) }}" alt=""  height="100px">
           </div>
-          <div>
-            <img src="{{ asset('/public/storage/' . $record->vendorRecord->logo3) }}" alt="" width="200px" height="100px">
-          </div>
+          {{-- <div>
+            <img src="{{ asset('/storage/app/public/'.$record->vendorRecord->logo3) }}" alt="" width="200px" height="100px">
+          </div> --}}
         </div>
       </div>
       <!-- Left panel -->
       <div class="col-md-6 left-panel d-flex flex-column justify-content-center align-items-center" 
-      style="background: url({{ asset('/public/storage/' . $record->vendorRecord->logo) }}) no-repeat center center; background-size: contain;">
+      style="background: url({{ asset('/storage/app/public/'.$record->vendorRecord->logo) }}) no-repeat center center; background-size: contain;">
         
       </div>
       
       <!-- Right panel -->
-      <div class="col-md-6 right-panel ps-5 bg-white">
+      <div class="col-md-6 right-panel ps-3 ps-lg-5 bg-white">
 
         @if(session('fail'))
           <div class="alert alert-danger">{{session('fail')}}</div>
@@ -146,28 +152,72 @@
             @csrf
             <input type="hidden" name="meeting_id" value="{{$meeting_id}}">
             <div class="form-group mb-2">
-                <label for="topic" class="block form-label text-sm fw-semibold text-gray-700 mb-1">Full Name</label>
-                <input type="text" name="name" required
-                       class="form-control">
+                @error('name')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+                <input type="text" name="name" placeholder="Full Name" class="form-control" value="{{old('name')}}">
             </div>
 
-            
-                <div class="form-group mb-2">
-                    <label for="start_time" class="block form-label text-sm fw-semibold text-gray-700 mb-1">Email</label>
-                    <input type="text" name="email" required
-                           class="form-control">
+
+
+            <div class="form-group mb-2">
+                  @error('company_name')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+                <input type="text" name="company_name" placeholder="Company Name" class="form-control" value="{{old('company_name')}}">
+            </div>
+
+
+             <div class="form-group mb-2">
+                
+              @error('designation')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+                <input type="text" name="designation" placeholder="Designation" class="form-control" value="{{old('designation')}}">
+            </div>            
+                <div class="form-group mb-2">  
+                  
+                 @error('email')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+
+                    <input type="text" name="email" placeholder="Email" class="form-control" value="{{old('email')}}">
                 </div>
-                <div class="form-group mb-2">
-                    <label for="duration" class="block form-label text-sm fw-semibold text-gray-700 mb-1">Phone Number</label>
-                    <input type="text" name="phone" class="form-control">
+
+                <div class="form-group mb-2">  
+                   @error('phone')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+
+                    <input type="text" name="phone" placeholder="Phone Number" class="form-control" value="{{old('phone')}}">
                 </div>
 
 
+                 <div class="form-group mb-2">
+                
+                   @error('field')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+
+                <input type="text" name="field" placeholder="Products / Services" class="form-control" value="{{old('field')}}">
+            </div>
+
+             <div class="form-group mb-2">
+                    
+              @error('password')
+                <span class="text-danger">{{$message}}</span>
+                @enderror
+
+                    <input type="password" name="password" placeholder="Create your own Password" class="form-control" value="{{old('password')}}">
+              </div>
+
+              
                 <div class="form-group mb-2">
-                    <label for="duration" class="block form-label text-sm fw-semibold text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" class="form-control">
-                </div>
-        
+                <label for="topic" class="block form-label text-sm fw-semibold text-gray-700 mb-1">
+                  <small>Would you like to share names and email ids of your colleagues to participate?</small>  </label>
+                <textarea name="refer" class="form-control"></textarea>
+            </div>
+
 
             <button type="submit" class="btn btn-primary mt-3 w-100 py-2 py-lg-3">
                Register
