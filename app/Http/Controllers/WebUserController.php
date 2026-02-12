@@ -67,7 +67,7 @@ class WebUserController extends Controller
     {
 
         $user = Auth::guard('webuser')->attempt(['phone' => $request->phone, 'password' => $request->password,'meeting_id'=>$request->meeting_number]);
-
+    
         $record = Auth::guard('webuser')->user();
 
         if ($user && $record->status == 1) {
